@@ -27,3 +27,10 @@ Every `oex` error says what is wrong and prints a `fix:` line. Logs of every ren
 | `publish_safe: false` in credits | a sound/music without a verified licence | replace it, or confirm its licence and add it again with `oex sfx add <folder> --rights licensed --licence ...` |
 | Render seems stuck | long film on a slow CPU | watch `build/logs/`; use `--preview` while iterating; `--workers N` |
 | Codex cannot run `oex` | sandbox/PATH | allow the command; ensure `uv tool` bin dir is on PATH |
+| `say produced no audio file` / `no playable audio` / `silence` | macOS `say` could not reach the speech service, usually inside an agent's sandbox | run the same `oex tts --provider say` in your own Terminal (or let the agent run it outside its sandbox), or record the narration; your previous narration was kept |
+| `... produced only Ns of audio for an N-word script` | the TTS engine stopped early | run it again; try a shorter text with your engine by hand; or record |
+| review `music is barely audible` | `music.gain_db` too low | raise it towards the default -14 (in 2 dB steps), or leave music out |
+| review `music competes with the voice` | not enough ducking | raise `music.duck_db` or lower `music.gain_db` |
+| review `no pictures` / `three text-only scenes in a row` | the film explains with text only | draw a diagram for the mechanism being explained (storyboard-builder `references/diagrams.md`); ignore it where words really are clearest |
+| review `the image covers only N% of the stage` | the picture was drawn too small | redraw it at the size in the diagram guide (images are never scaled up) |
+| `warning: ... is in a temporary folder` / `inside the Open Explainer source folder` | the project was created in a poor place | move the project folder somewhere durable of your own, e.g. `~/OpenExplainer/` |

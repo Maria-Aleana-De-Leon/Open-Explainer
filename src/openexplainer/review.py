@@ -2,9 +2,12 @@
 
 Checked from the plan and the rendered audio stems:
   layout   - empty stage before a scene's first content; the same layout 3+ times in a row; one layout dominating
+  visuals  - no pictures in a longer film; runs of text-only scenes; a short line alone on stage for long;
+             diagrams drawn too small for the stage
   text     - headlines or items too long for their size; too many items
   pacing   - long pauses inside the narration; very short or long static scenes
-  sound    - SFX density; SFX louder than the voice; music too loud in pauses; loudness drifting through the film
+  sound    - SFX density; SFX louder than the voice; music too loud in pauses, barely audible, or competing with
+             the voice; loudness drifting through the film
 Not checkable automatically (report them as such): whether the motion feels natural, whether the visuals explain
 the idea, colour/brand fit, the mascot's personality, and whether music and effects suit the tone.
 """
@@ -15,10 +18,18 @@ from pathlib import Path
 
 import numpy as np
 
-from .scenes import LEAD
+from .scenes import LEAD, regions
 
 HEADLINE_WORDS = 8
 ITEM_WORDS = 6
+TEXT_ONLY = {"title", "statement", "bullets"}
+LONE_LINE_WORDS = 6         # a statement/title this short ...
+LONE_LINE_S = 7.0           # ... alone on stage for longer than this
+IMAGE_MIN_FILL = 0.35       # an image covering less of the stage than this reads as a thumbnail
+MUSIC_TOO_LOUD_DB = -8      # music in pauses closer to the voice than this competes with it
+MUSIC_TOO_QUIET_DB = -19    # music in pauses further under the voice than this is barely heard (default is ~-15)
+MUSIC_UNDER_SPEECH_DB = -12  # music while the voice speaks should stay at least this far under it
+DIAGRAMS = "storyboard-builder: references/diagrams.md"
 
 
 def _first_content(sc: dict) -> float:
@@ -59,16 +70,20 @@ def run(proj, tl: dict) -> list[dict]:
         if gap > 1.5:
             note("layout", "warn", sc["id"], f"stage is empty for {gap:.1f}s at the start of the scene; show a heading "
                                              "or label first, or cue the main element earlier")
+    # repetition of the same template layout; 'image' scenes are excluded: every picture is a different layout
     types = [s["type"] for s in scenes]
     run_len = 1
     for i in range(1, len(types)):
-        run_len = run_len + 1 if types[i] == types[i - 1] else 1
+        run_len = run_len + 1 if types[i] == types[i - 1] and types[i] != "image" else 1
         if run_len == 3:
             note("layout", "suggest", scenes[i]["id"], f"three '{types[i]}' scenes in a row; vary the layout")
-    if len(types) >= 6:
-        top = max(set(types), key=types.count)
-        if types.count(top) / len(types) > 0.45:
-            note("layout", "suggest", "film", f"{types.count(top)}/{len(types)} scenes are '{top}'; mix in other types")
+    templated = [t for t in types if t != "image"]
+    if len(types) >= 6 and templated:
+        top = max(set(templated), key=templated.count)
+        if templated.count(top) / len(types) > 0.45:
+            note("layout", "suggest", "film", f"{templated.count(top)}/{len(types)} scenes are '{top}'; mix in other types")
+    # ---- visuals ----
+    _visuals(proj, tl, scenes, note)
     # ---- text ----
     for sc in scenes:
         for field in ("title", "text", "heading"):
@@ -119,9 +134,19 @@ def run(proj, tl: dict) -> list[dict]:
             music = decode_mono(d / "music.wav", sr)
             m = min(n, len(music) // hop)
             mdb = np.array([_rms_db(music[i * hop:(i + 1) * hop]) for i in range(m)])
-            quiet = ~speaking[:m]
-            if quiet.sum() >= 2 and float(np.median(mdb[quiet])) > ref - 8:
-                note("sound", "suggest", "film", "music is close to the voice level in pauses; lower music.gain_db")
+            quiet, talk = ~speaking[:m], speaking[:m]
+            if quiet.sum() >= 2:
+                pause_db = float(np.median(mdb[quiet])) - ref
+                if pause_db > MUSIC_TOO_LOUD_DB:
+                    note("sound", "suggest", "film", "music is close to the voice level in pauses; lower music.gain_db")
+                elif pause_db < MUSIC_TOO_QUIET_DB:
+                    note("sound", "warn", "film", f"music is barely audible: {-pause_db:.0f} dB under the voice in "
+                                                  "pauses (about 14-18 dB sounds right); raise music.gain_db towards "
+                                                  "the default -14, or leave music out")
+            if talk.sum() >= 2 and float(np.median(mdb[talk])) - ref > MUSIC_UNDER_SPEECH_DB:
+                note("sound", "warn", "film", f"music competes with the voice: only "
+                                              f"{ref - float(np.median(mdb[talk])):.0f} dB under it while it speaks; "
+                                              "raise music.duck_db or lower music.gain_db")
         if (d / "mix.wav").exists():
             mix = decode_mono(d / "mix.wav", sr)
             w3 = sr * 3
@@ -132,6 +157,48 @@ def run(proj, tl: dict) -> list[dict]:
                 note("sound", "warn", "film", f"loudness varies by {np.percentile(lv, 90) - np.percentile(lv, 10):.0f} dB "
                                               "between parts of the film")
     return out
+
+
+def _visuals(proj, tl: dict, scenes: list[dict], note) -> None:
+    """Visual storytelling prompts. They never demand a picture: words are sometimes the clearest explanation."""
+    if tl["duration"] > 30 and len(scenes) >= 4 and not any(s["type"] == "image" for s in scenes):
+        note("visuals", "suggest", "film", "no pictures: every scene is text or cards. If the topic has a mechanism, "
+                                           "a structure, a place or a shape, an original diagram usually explains it "
+                                           f"better ({DIAGRAMS}); keep text where words are clearest")
+    run_start = None
+    for i, sc in enumerate(scenes):
+        if sc["type"] in TEXT_ONLY:
+            run_start = i if run_start is None else run_start
+            if i - run_start == 2:
+                note("visuals", "suggest", f"{scenes[run_start]['id']}-{sc['id']}",
+                     "three text-only scenes in a row; could one be a diagram, a flow, a comparison or a number?")
+        else:
+            run_start = None
+    for sc in scenes:
+        line = sc.get("text") if sc["type"] == "statement" else sc.get("title") if sc["type"] == "title" else None
+        d = sc["end"] - sc["start"]
+        if line is not None and _words(line) <= LONE_LINE_WORDS and not sc.get("subtitle") and d > LONE_LINE_S:
+            note("visuals", "suggest", sc["id"], f"a {_words(line)}-word line is alone on stage for {d:.0f}s; add a "
+                                                 "supporting visual or give part of the narration to a new scene")
+    m = proj.cfg.get("mascot") or {}
+    R = regions(tl["width"], tl["height"], m.get("position") if m.get("enabled") else None)
+    sw, sh = R.stage[2] - R.stage[0], R.stage[3] - R.stage[1]
+    for sc in scenes:
+        if sc["type"] != "image":
+            continue
+        src = Path(sc["image"]) if Path(sc["image"]).is_absolute() else proj.root / sc["image"]
+        try:
+            from PIL import Image
+            with Image.open(src) as im:
+                w, h = im.size
+        except Exception:  # noqa: BLE001 - a missing/unreadable image is the renderer's error to report
+            continue
+        box_h = sh - (140 if sc.get("heading") else 0)
+        k = min(1.0, sw / w, box_h / h)            # images are scaled down to fit, never up
+        fill = (w * k) * (h * k) / (sw * sh)
+        if fill < IMAGE_MIN_FILL:
+            note("visuals", "warn", sc["id"], f"the image covers only {fill:.0%} of the stage ({w}x{h} px); draw it "
+                                              f"at about {sw}x{box_h} px ({DIAGRAMS})")
 
 
 def print_report(notes: list[dict], log=print) -> None:

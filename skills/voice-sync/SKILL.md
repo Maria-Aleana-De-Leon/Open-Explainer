@@ -15,7 +15,28 @@ words. Word timings live in `build/words.json`.
 | A recording (MP3/WAV/M4A) | copy it to the path in `project.json` → `narration.audio`; `oex transcribe` |
 | An ElevenLabs take + its timestamps JSON (`alignment` or Scribe `words`) | `oex words import <file.json>` (no transcription) |
 | An ElevenLabs take only | treat it as a recording: `oex transcribe` |
-| No recording yet | let them record from the approved script (recommended), or `oex tts --provider elevenlabs --voice <id>` (env `ELEVENLABS_API_KEY`, never written to disk) / `--provider say` (macOS drafts) / `--provider command --command "<engine> ... {text_file} ... {out}"` |
+| No recording yet | let them record from the approved script (recommended), or use text-to-speech (below) |
+
+## Text-to-speech options
+
+| Option | Needs | Notes |
+|---|---|---|
+| The user's own recording | a phone or microphone | best result; any MP3/WAV/M4A |
+| `oex tts --provider say [--voice Samantha] [--rate 165]` | macOS (built in, free) | drafts and tests; robotic but clear. List voices: `say -v '?'` |
+| `oex tts --provider command --command "<engine> ... {text_file} ... {out}"` | a local TTS engine **the user has installed and chosen** (e.g. Piper, espeak-ng) | runs entirely on their machine |
+| `oex tts --provider elevenlabs --voice <id>` | the user's ElevenLabs account; `ELEVENLABS_API_KEY` in the environment | paid, online: ask first; the key is never written to disk |
+
+`oex tts` checks the result and replaces the narration only if it is real, audible speech of a plausible length.
+If it reports an error, nothing was overwritten:
+
+- **`say produced no audio` / `no playable audio`**: macOS `say` cannot reach the speech service from some sandboxed
+  shells (for example an AI agent's sandbox). Ask the user to run the same `oex tts` command in their own Terminal,
+  or to allow it to run outside the sandbox, or to record the narration.
+- Any other provider failing: report the error and offer the other documented options. Never switch provider
+  without asking.
+
+Never search the computer for other voices, TTS models or audio from other projects, and never reuse files from
+outside the user's project and this toolkit. If no documented option works, ask the user to record.
 
 ## Transcribe
 

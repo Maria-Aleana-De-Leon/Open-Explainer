@@ -1,6 +1,6 @@
 ---
 name: storyboard-builder
-description: Write and fix storyboard.json for an open-explainer project - scenes (title, bullets, statement, flow, number, compare, image, end), on-screen text, cue phrases that time every animation to the narration, mascot poses and sound cues. Use when creating or editing a storyboard, turning a script into scenes, or when `oex validate` / `oex plan` report storyboard problems.
+description: Write and fix storyboard.json for an open-explainer project - scenes (title, bullets, statement, flow, number, compare, image, end), original explanatory diagrams, on-screen text, cue phrases that time every animation to the narration, mascot poses and sound cues. Use when creating or editing a storyboard, turning a script into scenes, or when `oex validate` / `oex plan` report storyboard problems.
 ---
 
 # Storyboard builder
@@ -15,16 +15,29 @@ Full field reference: `references/storyboard-reference.md` (read it before writi
   `"at": "phrase#2"` = second occurrence) or a number of seconds from the scene start.
 - `oex plan` aligns the text to the recording, cuts scenes in the pauses, and lands every element on its word.
 
-## Writing the scenes
+## Plan the pictures first
 
-1. One scene per script paragraph. Pick the type by the idea:
-   - a question or topic → `title`; a punchline or definition → `statement` (with `*accent*` + `emphasis`);
-   - steps or a process → `flow` (2-5 items); a list → `bullets` (2-5); one striking number → `number`;
-   - two things side by side → `compare`; a screenshot/diagram the user supplies → `image`; the close → `end`.
-2. On-screen text is short: headlines ≤ ~7 words, items ≤ ~5 words. Never paste the narration on screen; captions
-   already show it.
-3. Cue each item on the word where the narration introduces it, so the visual lands as the idea is said.
-4. Mark accent words with `*asterisks*` in on-screen text (`"Why is the sky *blue*?"`).
+For each paragraph ask: *what would a good teacher draw on the board here?* Then pick the scene type that shows it:
+
+- how something works, moves, pushes, flows, or what it is made of → an original diagram (`image`; draw it with
+  `references/diagrams.md`); steps or a process → `flow` (2-5 items, `cycle` for loops);
+- two things side by side → `compare`; one striking number → `number`; a short list → `bullets` (2-5);
+- a question or topic → `title`; a punchline or definition → `statement` (`*accent*` + `emphasis`);
+- something the user supplies (screenshot, photo, chart) → `image`; the close → `end`.
+
+Pictures where they teach, words where they are clearest: never force a diagram into a scene that does not need
+one. A film longer than ~30 s whose topic has a mechanism or structure usually needs at least one diagram.
+
+## Composition, variety and pacing
+
+1. **One focal point per scene.** Headline ≤ ~7 words, items ≤ ~5 words, at most ~20 words on screen. Never paste
+   the narration on screen; captions already show it.
+2. **Vary the layout:** no more than two text-only scenes (`title`, `statement`, `bullets`) in a row, and no type
+   used for more than ~40% of the scenes.
+3. **Keep the stage alive:** something new should land every ~3-6 s. A single short line alone for more than
+   ~7 s looks empty: add items, a diagram, or split the paragraph into two scenes.
+4. **Cue each item on the word that introduces it**, so the visual lands as the idea is said. Mark accent words
+   with `*asterisks*` (`"Why is the sky *blue*?"`).
 5. Mascot: `"mascot": [{"at": "...", "pose": "point"}, {"at": "...", "expression": "happy", "for": 1.5}]` using
    only states the prepared mascot has (`oex mascot check <dir>` lists them). Expressions have no lip sync, so
    keep them short with `"for"`.
@@ -32,6 +45,7 @@ Full field reference: `references/storyboard-reference.md` (read it before writi
 
 ## Then
 
-`oex validate` → `oex plan`. Errors list every problem with the scene id; fix them all, re-run.
+`oex validate` → `oex plan` → `oex render --preview` → look at `oex sheet` and read `oex review` (it flags text-only
+runs, lonely lines, small diagrams and music levels). Errors list every problem with the scene id; fix them all, re-run.
 Warnings such as `"X" was not recognised in the audio; time interpolated` are usually recogniser spelling
 differences. If a cue lands visibly wrong in the preview, choose a nearby, more distinctive phrase.

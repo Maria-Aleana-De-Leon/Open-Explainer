@@ -15,7 +15,7 @@ src/openexplainer/
   presenter.py                         presenter scheduling (shapes, poses, nods, blinks) and drawing - spec S4
   demo.py                              synthetic starter project (`oex new --demo`)
   durations.py                         length planning from word count and measured pace (`oex estimate`)
-  review.py                            quality heuristics (`oex review`): layout, text, pacing, sound
+  review.py                            quality heuristics (`oex review`): layout, visuals, text, pacing, sound
   sfx.py                               catalog oex-sfx-2: add/map, labelling, query, check, cut, cue planning - spec S5
   audio.py                             voice master, speech-presence ducking, SFX track, oversampled limiter - spec S2
   render.py                            per-scene frame rendering -> ffmpeg, cache, concat, mux
@@ -23,7 +23,7 @@ src/openexplainer/
   pipeline.py                          plan -> presenter -> mix -> render -> captions/stems -> QA -> credits -> VERIFY.md;
                                        preflight
   tts.py                               optional TTS providers; `synthesize` + `check_speech` (no silent failures)
-skills/                                Agent Skills, canonical (SKILL.md + references + agents/openai.yaml)
+skills/                                Agent Skills, canonical (SKILL.md + references + scripts + agents/openai.yaml)
 .claude/skills/, .agents/skills/      generated mirrors for Claude Code and Codex (`tools/skills.py sync`)
 AGENTS.md, CLAUDE.md, skills.lock.json generated from docs/agent-guide.md and skills/
 prompts/                               mascot prompt library

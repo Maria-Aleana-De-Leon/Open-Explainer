@@ -50,3 +50,17 @@ def test_unknown_field_suggests_the_right_name(demo, tmp_path):
     (p / "project.json").write_text(json.dumps(cfg))
     r = run("-C", str(p), "validate")
     assert r.returncode != 0 and "did you mean 'style'" in r.stderr
+
+
+def test_new_project_location_warnings(tmp_path, monkeypatch):
+    from openexplainer import cli
+    assert "temporary folder" in cli.location_warning(tmp_path / "film")      # pytest's tmp is a temp dir
+    monkeypatch.setattr(cli, "_is_temp", lambda r: False)                    # pretend tmp_path is durable
+    assert cli.location_warning(tmp_path / "film") is None
+    repo = tmp_path / "toolkit"
+    repo.mkdir()
+    (repo / "pyproject.toml").write_text('[project]\nname = "openexplainer"\n')
+    assert "source folder" in cli.location_warning(repo / "examples" / "mine")
+    monkeypatch.undo()
+    r = run("new", str(tmp_path / "film2"))
+    assert r.returncode == 0 and "warning:" in r.stderr and "temporary folder" in r.stderr

@@ -33,8 +33,16 @@ analysis (length, brightness, attack), marking guessed kinds with `kind-guessed`
 
 ```json
 "sfx":   {"catalog": "<file>", "auto": true, "max_per_minute": 6, "min_gap": 3.0, "gain_db": -12},
-"music": {"file": "audio/bed.mp3", "gain_db": -20, "duck_db": 10, "license": "<licence>", "fade_out": 2}
+"music": {"file": "audio/bed.mp3", "gain_db": -14, "duck_db": 8, "license": "<licence>", "fade_out": 2}
 ```
+
+Music level: start from the defaults above (`gain_db` -14, `duck_db` 8). That keeps the bed clearly audible in
+pauses, about 14-18 dB under the voice, and well under it while the voice speaks. Change them only after
+listening, in steps of 2 dB: too loud → lower `gain_db` or raise `duck_db`; barely heard → raise `gain_db`.
+`oex review` warns when music is barely audible (more than ~19 dB under the voice in pauses) or competes with the
+voice while it speaks. No suitable music? Leave `music` out rather than adding an inaudible bed. The toolkit's
+own demo bed (`examples/audio/music/calm-loop.wav`, MIT) and demo sounds (`examples/audio/catalog.json`) are
+always safe to use.
 
 - `auto` places cues by priority: scene changes (transition) > number landings, emphasis words, the call to action
   (chime, impact) > item reveals (pop, click). Sounds rotate so the same one never repeats back to back; `voice` and

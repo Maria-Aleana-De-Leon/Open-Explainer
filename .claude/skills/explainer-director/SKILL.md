@@ -12,6 +12,14 @@ Before anything: `oex doctor` (if `oex` is missing: toolkit `docs/INSTALL.md`). 
 they have any recording: `oex new demo --demo && oex -C demo render`.
 Every `oex` command takes `-C <project>`.
 
+**Where projects live:** in a durable folder the user chooses; if they have no preference, `~/OpenExplainer/<topic>`.
+Never in a temporary folder (`/tmp`, the system temp dir; it is cleared) and never inside the toolkit's own folder
+(their recordings must never be committed). `oex new` warns about both. Tell the user where the project is.
+
+**Privacy:** work only in the user's project and the toolkit. Never search the user's other folders, caches or
+other projects for voices, models, images, music or tools, and never reuse files from them. If something is
+missing, say what and offer the documented options (see voice-sync for narration).
+
 ## Start from what the creator already has
 
 Many creators have never used video software. Do not open with a questionnaire. Look first, then ask only for
@@ -38,10 +46,10 @@ Talk in outcomes: "your video", "the cartoon of you", "your voice recording" - n
 | 1 | Inputs | As above: what they have, what is missing, defaults chosen. | a voice recording (or approved script + chosen voice route) |
 | 2 | Script | Write or recover one paragraph per scene (below). Check the length with `oex estimate`; add or cut words until it says *on target*. Show it as plain paragraphs they can read aloud. | on target, and the creator approves it |
 | 3 | Project | `oex new <dir>`; `oex use-narration <file>` (copies, transcribes, reports length and fit); `oex use-mascot <folder>` if they have one. | narration in place, plan prints the scene list |
-| 4 | Storyboard | Use **storyboard-builder**. `"say"` = that paragraph's exact words. A strong hook: a short `title` whose `emphasis` lands on the key spoken phrase. `oex validate`. | 0 problems |
+| 4 | Storyboard | Use **storyboard-builder**: plan the pictures first, and draw original diagrams where they explain better than text (its diagram guide, references/diagrams.md in the storyboard-builder skill). `"say"` = that paragraph's exact words. A strong hook: a striking `number`, a picture, or a short `title` whose `emphasis` lands on the key spoken phrase. `oex validate`. | 0 problems |
 | 5 | Timing | `oex plan`. Fix every error; read every warning. | plan prints the scene list |
 | 6 | Mascot / sound | Optional: **mascot-prep** (approve `review.png` with them), **sound-designer**. | they approved the mascot review |
-| 7 | Preview | `oex render --preview`, then `oex sheet --film renders/<name>-preview.mp4` and LOOK at the sheet. Fix layout or cue problems in `storyboard.json` and re-render (only changed scenes re-render). | the sheet matches the storyboard |
+| 7 | Preview | `oex render --preview`, then `oex sheet --film renders/<name>-preview.mp4` and LOOK at the sheet, and read `oex review`. Ask: would a viewer understand the idea with the sound off? Is any scene a lonely line, a wall of text, or a tiny drawing? Are labels readable? Fix `storyboard.json` or the diagrams and re-render (only changed scenes re-render). | the sheet explains the topic; review warnings fixed or explained |
 | 8 | Final | Use **render-qa**: `oex preflight`, then `oex render`. QA must print `QA: PASS`. Give them the MP4, show `*-sheet.png`, mention captions (`.srt`) and `*.credits.json`, and ask them to watch it once. | preflight PASS, then QA PASS shown in the output |
 
 ## Script rules
@@ -60,3 +68,5 @@ Talk in outcomes: "your video", "the cartoon of you", "your voice recording" - n
 - Use music or sound effects whose licence the user has not confirmed. Unverified assets are flagged in
   `*.credits.json` (`publish_safe: false`). Tell the user before they publish.
 - Ask for or store the user's photo. Mascots are prepared from their finished PNGs only.
+- Search the user's computer for missing tools, voices, models or assets, or use files from their other projects.
+- Leave a real project in a temporary folder.

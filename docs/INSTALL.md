@@ -69,7 +69,9 @@ the `explainer-director` skill triggers. `oex` must be on the PATH Claude Code's
 Skills load from `~/.codex/skills/`. Mention one explicitly if it does not trigger: *"Use $explainer-director to
 make an explainer video about …"*. Codex runs commands in a sandbox. Allow it to run `oex` and `ffmpeg`, and to
 write in the project folder. `oex transcribe` needs network access once to download the Whisper model; afterwards
-it runs offline.
+it runs offline. On macOS, `say` (the free draft voice) cannot reach the speech service from inside the Codex
+sandbox: `oex tts --provider say` then stops with an error. Run that one command yourself in Terminal, approve it to
+run outside the sandbox, or record your narration.
 
 ### What has been verified for each agent
 

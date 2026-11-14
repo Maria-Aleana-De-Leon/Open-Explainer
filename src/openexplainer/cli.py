@@ -58,6 +58,26 @@ def cmd_doctor(a) -> int:
     return 1 if bad else 0
 
 
+def _is_temp(r: Path) -> bool:
+    import tempfile
+    temps = {Path(tempfile.gettempdir()).resolve(), Path("/tmp").resolve(), Path("/var/tmp").resolve()}
+    return any(r == t or t in r.parents for t in temps) or "/var/folders/" in r.as_posix()
+
+
+def location_warning(d: Path) -> str | None:
+    """Why `d` is a poor home for a film project, or None. Projects hold the user's own recordings and renders."""
+    r = d.resolve()
+    if _is_temp(r):
+        return (f"{d} is in a temporary folder that the system clears; keep real projects somewhere durable, "
+                "for example ~/OpenExplainer/<project>")
+    for parent in [r, *r.parents]:
+        pp = parent / "pyproject.toml"
+        if pp.is_file() and 'name = "openexplainer"' in pp.read_text(errors="ignore"):
+            return (f"{d} is inside the Open Explainer source folder; keep projects outside it so your recordings "
+                    "and renders are never committed, for example ~/OpenExplainer/<project>")
+    return None
+
+
 def cmd_new(a) -> int:
     d = Path(a.folder)
     if d.exists() and any(d.iterdir()):
@@ -69,6 +89,9 @@ def cmd_new(a) -> int:
     (d / "project.json").write_text(json.dumps(cfg, indent=2) + "\n")
     (d / "storyboard.json").write_text(json.dumps(STORYBOARD_TEMPLATE, indent=2, ensure_ascii=False) + "\n")
     (d / ".gitignore").write_text("build/\nrenders/\n")
+    warning = location_warning(d)
+    if warning:
+        print(f"warning: {warning}", file=sys.stderr)
     if a.demo:
         from . import demo
         demo.write(d)

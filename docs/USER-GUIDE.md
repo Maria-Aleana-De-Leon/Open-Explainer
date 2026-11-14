@@ -31,8 +31,10 @@ more script, not slower speech. Record
 it in one take (quiet room, phone 20 cm away is fine) and save as `audio/narration.wav` (MP3/M4A also fine:
 set `narration.audio`). Pauses between paragraphs help: scenes are cut inside them.
 
-No microphone? `oex tts --provider say` (macOS draft voice), `--provider elevenlabs --voice <id>` (your account;
-`ELEVENLABS_API_KEY` in the environment), or `--provider command --command "..."` for a local engine.
+No microphone? `oex tts --provider say` (macOS draft voice, free), `--provider command --command "..."` for a
+local engine you have installed (for example Piper), or `--provider elevenlabs --voice <id>` (your paid account;
+`ELEVENLABS_API_KEY` in the environment). `oex tts` checks the result and only replaces your narration if it got
+real, audible speech; otherwise it says why and keeps the old file.
 Already have an ElevenLabs take with its timestamps JSON? Use `oex words import file.json` instead of transcribing.
 
 ### 3. Storyboard
@@ -52,6 +54,14 @@ narration:
 Scene types: `title`, `bullets`, `statement`, `flow`, `number`, `compare`, `image`, `end`. Full reference:
 [skills/storyboard-builder/references/storyboard-reference.md](../skills/storyboard-builder/references/storyboard-reference.md).
 Check it any time with `oex validate`.
+
+Show, don't only tell: where the narration explains how something works, an original diagram in an `image` scene
+usually teaches better than text. [The diagram guide](../skills/storyboard-builder/references/diagrams.md) covers
+when to draw, sizes, legibility and a small Pillow-based kit that draws in your film's style. After a preview,
+`oex review` points out text-only stretches, lonely lines, small diagrams and music that is too quiet or too loud.
+
+Keep each project in a durable folder of its own (for example `~/OpenExplainer/my-film`), not in a temporary
+folder and not inside the toolkit's folder; `oex new` warns about both.
 
 ### Swapping in your recording or your mascot later
 

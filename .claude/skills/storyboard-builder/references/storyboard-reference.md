@@ -35,7 +35,7 @@
 | `flow` | `heading`, `items` (required), `layout` (`row` default, or `cycle`) | nodes pop in on their cues, arrows draw between them (row in 16:9, column in 9:16 or > 5 items); `cycle` places 3-6 nodes in a loop and closes it with an arrow back to the first - use it for anything that repeats |
 | `number` | `value` (required, e.g. `"300 billion"`, `"0.07 s"`, `"5-8%"`), `label` | the leading number counts up to its value on `at` |
 | `compare` | `heading`, `left`/`right` (required): `{title, items, at}` | each card rises on its cue, items follow |
-| `image` | `image` (required, path relative to the project), `heading` | the image rises on `at` (missing file = that scene fails, others still render) |
+| `image` | `image` (required, path relative to the project), `heading` | the image rises on `at` (missing file = that scene fails, others still render). Draw original diagrams at 1580×600 (16:9), 1170×600 (16:9 with mascot), 920×1000 (9:16) or 920×640 (9:16 with mascot): images are scaled down to fit, never up. See `diagrams.md` |
 | `end` | `title` (required), `cta` | title, then a call-to-action pill |
 
 Items without `at` are spread evenly across the scene's narration.

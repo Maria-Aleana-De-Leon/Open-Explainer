@@ -11,6 +11,25 @@ All notable changes to this project are listed here. The format follows
   error with a fix, the previous narration is kept, and no other provider is tried. (macOS `say` inside a sandbox
   could exit successfully and leave an empty file.)
 
+### Added
+- Diagram guide and Pillow-only diagram kit in the storyboard-builder skill (`references/diagrams.md`,
+  `scripts/diagram_kit.py`) for original explanatory diagrams in `image` scenes, in the film's style.
+- `oex review` visual prompts (no pictures in a longer film, runs of text-only scenes, lonely short lines, diagrams
+  too small for the stage) and music-level prompts (barely audible, competing with the voice).
+- `oex new` warns when a project is created in a temporary folder or inside the toolkit's source folder.
+
+### Changed
+- Skills: storyboard guidance on choosing pictures, composition, variety, pacing and text density; documented
+  narration options and failure handling; durable project folders; agents must not search the user's other
+  folders or toolchains for missing assets.
+- sound-designer's music example now matches the defaults (`gain_db` -14, `duck_db` 8); the previous example
+  (-20 / 10) made music almost inaudible.
+
+### Known issues (priority for the next release)
+- **Emphasis highlight renders incorrectly.** The marker under `*accent*` words (`statement` `emphasis`, titles) is
+  drawn as one bar per word, so multi-word accents show gaps ("more | lift"), and it sits at 74-97% of the word's
+  box height, so it overlaps letters with descenders and looks offset ("fly?"). Cause: `scenes._highlight`. Fix:
+  one continuous bar per line of accent text, placed under the baseline.
 
 ## [0.1.0]
 

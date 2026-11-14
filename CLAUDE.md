@@ -21,7 +21,14 @@ Claude Code reads `.claude/skills/`; Codex reads `.agents/skills/`. Both are gen
 
 ## Working rules
 
-- Run `oex doctor` first. Use `.venv/bin/oex` when developing in this repo, otherwise `oex`.
+- Run `oex doctor` first. The command is `oex` (only contributors working on the toolkit's own code use
+  `.venv/bin/oex` after `uv sync`).
+- Create film projects in a durable folder the user chooses (default `~/OpenExplainer/<topic>`), never in a
+  temporary folder and never inside this repository.
+- Work only in the user's project and this toolkit. Never search the user's other folders, caches or projects for
+  voices, models, images, music or tools, and never reuse files from them; if something is missing, ask.
+- Pictures where they teach: draw original diagrams for mechanisms and structures (storyboard-builder,
+  `references/diagrams.md`) instead of filling a film with text cards.
 - Deterministic work (validation, timing, mixing, rendering, checks) is done by `oex`. Never re-implement it,
   and never hand-edit `build/` or `renders/`.
 - Before a final render, run `oex preflight`. After it, `QA: PASS` and `VERIFY.md` are the evidence. Never claim
