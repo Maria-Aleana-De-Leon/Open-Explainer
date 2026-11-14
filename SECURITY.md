@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Open Explainer is in early release. Security fixes are made on the latest version on `main`.
+Open Explainer is in public beta. Security fixes are made on the latest version on `main`.
 
 ## Reporting a vulnerability
 

@@ -1,5 +1,9 @@
 # open-explainer
 
+> **Public beta (v0.1.0).** Tested on macOS only; Linux and Windows are unverified. A GitHub Actions CI workflow is
+> included but has **not passed yet**: so far the test suite has been run locally on macOS. Please
+> [report problems](https://github.com/Maria-Aleana-De-Leon/Open-Explainer/issues).
+
 Open-source toolkit for **narrated AI explainer videos**, driven by AI coding agents (Claude Code, Codex) or by hand.
 Bring your narration and, optionally, your own cartoon mascot. open-explainer builds the storyboard timing,
 animates scenes on your words, lip-syncs the mascot, mixes music and sound effects, renders 1080p MP4 and checks
@@ -22,11 +26,18 @@ the result.
 
 ## Quick start
 
+You need FFmpeg and [uv](https://docs.astral.sh/uv/) (or Python 3.10+ with pip); see [docs/INSTALL.md](docs/INSTALL.md).
+
 ```bash
 git clone https://github.com/Maria-Aleana-De-Leon/Open-Explainer.git open-explainer && cd open-explainer
-uv tool install '.[transcribe]'          # installs the `oex` command (or: pip install '.[transcribe]')
+uv tool install '.[transcribe]'          # installs the `oex` command (or, in a virtualenv: pip install '.[transcribe]')
 oex doctor                               # checks Python, FFmpeg, encoders
+oex new demo --demo && oex -C demo render    # try it: a short demo film, no recording needed -> demo/renders/
+```
 
+Your own film:
+
+```bash
 oex estimate script.txt --target 3:00    # is the script the right length? (before recording)
 oex new my-film --format 16:9 --style paper
 # put your recording at my-film/audio/narration.wav, write my-film/storyboard.json
@@ -64,14 +75,16 @@ say *"make an explainer video about how GPS works"*. See [docs/INSTALL.md](docs/
 | macOS `say` | optional | draft narration and the example voice-overs (macOS only) |
 
 **Platforms.** Developed and tested on macOS (Apple Silicon, CPU only). The code is pure Python plus FFmpeg and
-is expected to work on Linux and Windows, but those platforms have not been tested yet; CI runs the test suite on
-Ubuntu and macOS. Reports are welcome.
+is expected to work on Linux and Windows, but those platforms have not been tested yet. A CI workflow for Ubuntu and
+macOS is included but has not passed yet. Reports are welcome.
 
 ## Status and known limitations
 
-Version 0.1.0, early release. Known limitations:
+Version 0.1.0, **public beta**. Known limitations:
 
-- Tested on macOS only (see above); 30 fps is tested, 60 fps is not.
+- GitHub Actions CI has not passed yet; the test suite has only been run locally on macOS.
+
+- Tested on macOS only; Linux and Windows are unverified. 30 fps is tested, 60 fps is not.
 - Lip sync is driven by the sound of the voice: cartoon quality, not phoneme-accurate.
 - Custom mascots are tested with the bundled demo mascot and a procedurally drawn stand-in; mascots made with
   image generators may need the repair prompt (`oex prompts 6`).

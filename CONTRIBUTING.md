@@ -1,7 +1,7 @@
 # Contributing
 
 1. `uv sync --extra transcribe`, then `.venv/bin/python -m pytest` and `uvx ruff check src tools tests`. All tests
-   and lint checks must pass (CI runs both).
+   and lint checks must pass (the CI workflow runs both).
 2. Keep deterministic work in code (`src/openexplainer/`), not in skill instructions. Skills stay short and call `oex`.
 3. Every user-facing error is an `OexError` with a `fix`. Validate inputs and report all problems at once.
 4. A change that affects pixels or sound needs a test, and a look at a contact sheet (`oex sheet`) of an example.

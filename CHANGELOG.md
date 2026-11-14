@@ -7,7 +7,7 @@ All notable changes to this project are listed here. The format follows
 
 ## [0.1.0]
 
-First public release.
+First public beta. Tested on macOS only; Linux and Windows are unverified; GitHub Actions CI has not passed yet.
 
 - `oex` command line tool: project scaffolding (`oex new`, `oex new --demo`), script length planning
   (`oex estimate`), narration intake, transcription with faster-whisper (optional) or imported word timings,
