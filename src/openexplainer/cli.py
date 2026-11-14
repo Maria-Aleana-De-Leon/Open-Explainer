@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import math
 import json
 import shutil
 import sys
@@ -353,12 +354,16 @@ def cmd_sheet(a) -> int:
     film = _latest_film(p, a.film)
     tl = _timeline(p)
     times, labels = [], []
-    if a.every:
-        t = 0.0
-        while t < tl["duration"]:
-            times.append(t)
-            labels.append("")
-            t += a.every
+    if a.every:                                     # every N seconds, within the chosen scenes (or the whole film)
+        for sc in tl["scenes"]:
+            if a.scene and sc["id"] not in a.scene.split(","):
+                continue
+            k = math.ceil(sc["start"] / a.every - 1e-9)
+            while k * a.every < sc["end"] - 1e-9:
+                t = round(k * a.every, 3)
+                times.append(t)
+                labels.append(f"{sc['id']} {t:.1f}s")
+                k += 1
     else:
         for sc in tl["scenes"]:
             if a.scene and sc["id"] not in a.scene.split(","):

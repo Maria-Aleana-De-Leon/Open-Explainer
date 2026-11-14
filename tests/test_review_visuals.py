@@ -109,3 +109,66 @@ def test_a_sequence_of_different_diagrams_is_not_flagged_as_repetition(tmp_path)
                         ({"id": "s07", "type": "end", "title": "Thanks"}, 12)])
     msgs = [n["msg"] for n in review.run(proj, tl) if n["area"] == "layout"]
     assert not any("'image'" in m for m in msgs), msgs
+
+
+# ---------- motion prompts for animated diagrams ----------
+
+def _diagram(sid, steps=None, **kw):
+    sc = {"id": sid, "type": "diagram", "nodes": [{"id": "a", "label": "A", "x": 0.2, "y": 0.5},
+                                                  {"id": "b", "label": "B", "x": 0.8, "y": 0.5}],
+          "edges": [{"id": "ab", "from": "a", "to": "b"}], **kw}
+    if steps is not None:
+        sc["steps"] = steps
+    return sc
+
+
+@needs_ffmpeg
+def test_static_and_frozen_diagrams_are_prompted(tmp_path):
+    proj, tl = _film(tmp_path, [
+        (_diagram("s01"), 30),                                                         # no steps at all
+        (_diagram("s02", [{"at": "wing", "show": ["a"]}]), 60),                        # one early step, then frozen
+    ])
+    msgs = {n["where"]: n["msg"] for n in _areas(review.run(proj, tl), "motion")}
+    assert "static diagram" in msgs["s01"] and "nothing changes" in msgs["s02"]
+
+
+@needs_ffmpeg
+def test_crowded_steps_and_camera_push_are_prompted(tmp_path):
+    many = {"at": "wing", "show": ["a", "b"], "draw": ["ab"], "activate": ["a"], "flow": {"edge": "ab"},
+            "label": {"b": "Bee"}}
+    proj, tl = _film(tmp_path, [(_diagram("s01", [many], camera="push"), 16)])
+    notes = _areas(review.run(proj, tl), "motion")
+    assert any("kinds of change" in n["msg"] for n in notes)
+    assert any("camera push" in n["msg"] for n in notes)
+
+
+@needs_ffmpeg
+def test_a_well_paced_diagram_gets_no_motion_prompts(tmp_path):
+    steps = [{"at": "wing", "show": ["a"]}, {"at": "passing air", "show": ["b"]},
+             {"at": "downward", "flow": {"edge": "ab", "label": "air"}}, {"at": "pushes", "activate": ["b"]}]
+    proj, tl = _film(tmp_path, [(_diagram("s01", steps, camera="still"), 16)])
+    assert _areas(review.run(proj, tl), "motion") == []
+
+
+@needs_ffmpeg
+def test_touching_nodes_are_prompted(tmp_path):
+    sc = _diagram("s01", [{"at": "wing", "show": ["a"]}, {"at": "passing air", "show": ["b"]}], camera="still")
+    sc["nodes"][1]["x"] = 0.27                                                      # right next to "a"
+    proj, tl = _film(tmp_path, [(sc, 16)])
+    assert any("'a' and 'b' touch" in n["msg"] for n in _areas(review.run(proj, tl), "motion"))
+
+
+@needs_ffmpeg
+def test_a_small_corner_diagram_is_prompted(tmp_path):
+    sc = _diagram("s01", [{"at": "wing", "show": ["a"]}, {"at": "passing air", "show": ["b"]}], camera="still")
+    sc["nodes"][0].update(x=0.05, y=0.1)
+    sc["nodes"][1].update(x=0.3, y=0.1)
+    proj, tl = _film(tmp_path, [(sc, 16)])
+    assert any("uses only" in n["msg"] for n in _areas(review.run(proj, tl), "motion"))
+
+
+@needs_ffmpeg
+def test_runs_of_diagram_scenes_are_not_called_repetitive(tmp_path):
+    steps = [{"at": "wing", "show": ["a"]}, {"at": "passing air", "show": ["b"]}]
+    proj, tl = _film(tmp_path, [(_diagram(f"s0{i}", steps, camera="still"), 16) for i in range(1, 7)])
+    assert _areas(review.run(proj, tl), "layout") == []

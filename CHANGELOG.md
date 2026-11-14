@@ -19,11 +19,17 @@ All notable changes to this project are listed here. The format follows
 - `oex validate` checks animated diagrams: unknown ids (it lists the valid ones), an id of the wrong kind,
   duplicate ids, broken token paths, nodes without a position in a manual layout.
 - QA checks that every diagram step lands on its word; automatic sound effects can mark diagram reveals.
+- `oex review` prompts on animated diagrams that never move or freeze for long, steps too close together or that
+  start too many changes at once, nodes that touch, diagrams that are small or off-centre, and camera pushes over
+  diagrams.
 
 ### Fixed
 - Text no longer shakes when the camera push is on. The push resized each frame to a truncated whole-pixel size and
   cropped at a truncated offset, so text jumped back and forth by about a pixel; the camera push, zoom and slide now
   use one sub-pixel transform (premultiplied alpha), so the push is a smooth, steady drift.
+- `oex sheet --every N` now respects `--scene` and labels each frame with its scene and time.
+- `oex review` no longer calls a run of `image` or `diagram` scenes repetitive (each picture is its own layout),
+  and counts animated diagrams as pictures.
 
 ### Changed
 - New projects (`oex new`, including `--demo`) set `"camera": "still"` in `project.json`. Existing projects without a
