@@ -3,7 +3,7 @@
  "skills": {
   "explainer-director": {
    "files": 2,
-   "sha256": "220584650405112e161c5c283166ff57ba239f4be4c23936e8d630d86182c24c"
+   "sha256": "d56b5d5dee161ecbec6fb4e66a8991f598ac1529721c0ecefb28e9c393cb6fe2"
   },
   "mascot-prep": {
    "files": 11,
@@ -11,15 +11,15 @@
   },
   "render-qa": {
    "files": 2,
-   "sha256": "ccaefe4c6c01a1856d4cc86570c93c93741e0d1f3f90a6a9f43a8d87c1f66102"
+   "sha256": "6b511552637e9a2a11189bcde9cabb30c6fc92412d9a290944f4e1ef7223afa8"
   },
   "sound-designer": {
    "files": 2,
    "sha256": "25c086aa525f2f42fe8805668a86e3687403bc45a70ceb6fb64ffa55af6fbf00"
   },
   "storyboard-builder": {
-   "files": 5,
-   "sha256": "7bed9cfa7513d83470bed5d7b14e23e04621f37d028668563283bf64dc668c3f"
+   "files": 6,
+   "sha256": "b823e0ad7967507e8a15523e22a4160dc90abd8955b9123a8d1edd4723b114f6"
   },
   "voice-sync": {
    "files": 2,

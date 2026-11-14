@@ -52,14 +52,16 @@ narration:
            {"text": "The precise time", "at": "precise time"}]}
 ```
 
-Scene types: `title`, `bullets`, `statement`, `flow`, `number`, `compare`, `image`, `end`. Full reference:
+Scene types: `title`, `bullets`, `statement`, `flow`, `number`, `compare`, `image`, `diagram`, `end`. Full reference:
 [skills/storyboard-builder/references/storyboard-reference.md](../skills/storyboard-builder/references/storyboard-reference.md).
 Check it any time with `oex validate`.
 
-Show, don't only tell: where the narration explains how something works, an original diagram in an `image` scene
-usually teaches better than text. [The diagram guide](../skills/storyboard-builder/references/diagrams.md) covers
+Show, don't only tell: where parts work together or something happens over time, an animated `diagram` scene
+shows it on the narration's words: parts appear as they are named, connectors draw, requests and answers travel,
+states change, and the picture can carry on across scenes ([the motion guide](../skills/storyboard-builder/references/motion.md)).
+Where a shape or a place explains it, an original drawing in an `image` scene usually teaches better than text. [The diagram guide](../skills/storyboard-builder/references/diagrams.md) covers
 when to draw, sizes, legibility and a small Pillow-based kit that draws in your film's style. After a preview,
-`oex review` points out text-only stretches, lonely lines, small diagrams and music that is too quiet or too loud.
+`oex review` points out text-only stretches, lonely lines, small diagrams, static or crowded animated diagrams and music that is too quiet or too loud.
 
 Keep each project in a durable folder of its own (for example `~/OpenExplainer/my-film`), not in a temporary
 folder and not inside the toolkit's folder; `oex new` warns about both.

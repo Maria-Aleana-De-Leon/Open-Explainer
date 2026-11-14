@@ -22,6 +22,9 @@ All notable changes to this project are listed here. The format follows
 - `oex review` prompts on animated diagrams that never move or freeze for long, steps too close together or that
   start too many changes at once, nodes that touch, diagrams that are small or off-centre, and camera pushes over
   diagrams.
+- The storyboard-builder skill's motion guide (`references/motion.md`) tells agents when and how to plan animated
+  diagrams; the explainer-director and render-qa skills plan and check them (including `oex sheet --every 0.5` to
+  look at motion).
 
 ### Fixed
 - Text no longer shakes when the camera push is on. The push resized each frame to a truncated whole-pixel size and

@@ -15,7 +15,7 @@ description: Render, preview, regenerate and quality-check open-explainer films 
 | Final 1080p | `oex render` (runs QA, writes `<name>.VERIFY.md` and `<name>-sheet.png`) |
 | Re-render some scenes | `oex render --only s03,s07 [--force]` |
 | Check an existing film | `oex qa [--film <mp4>]` |
-| Quality prompts | `oex review` (runs after every final render too): empty stages, repeated layouts, text-only films and runs of text-only scenes, lonely short lines, diagrams too small for the stage, long text, long pauses, loud or crowded effects, music too loud, barely audible or competing with the voice, loudness drift. Findings are things to look at, not failures |
+| Quality prompts | `oex review` (runs after every final render too): empty stages, repeated layouts, text-only films and runs of text-only scenes, lonely short lines, diagrams too small for the stage, animated diagrams that are static, freeze or crowd several changes into one moment, camera pushes over diagrams, long text, long pauses, loud or crowded effects, music too loud, barely audible or competing with the voice, loudness drift. Findings are things to look at, not failures |
 
 Scenes render in parallel and are cached by everything that affects their pixels (content, timing, style,
 mascot track and renderer code). Unchanged scenes are reused; changing one scene re-renders only that scene.
@@ -51,6 +51,10 @@ QA proves the file is correct, not that it explains anything. On `<name>-sheet.p
 - **Diagrams:** no line running through an object unless it is meant to; no label touching another label, a line
   or a shape's edge; nothing cramped against the edge; arrows start and end on the things they connect; even
   spacing. (The diagram kit prints these as warnings when it saves; look at the frames anyway.)
+- **Motion (animated diagrams):** a sheet shows single frames, so look at the motion itself:
+  `oex sheet --scene <id> --every 0.5` and the preview film. Each step lands on its word; connectors draw from
+  cause to effect; tokens travel only over connectors already drawn and never hide a label; text never shakes or
+  zooms; no stretch longer than ~6 s where nothing changes; nothing moves that the narration is not about.
 - **Variety:** not the same layout scene after scene.
 - **Sound:** listen to `<name>-stems/mix.wav` or the film: is the music audible in pauses but never over the voice?
 

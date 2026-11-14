@@ -36,9 +36,10 @@
 | `number` | `value` (required, e.g. `"300 billion"`, `"0.07 s"`, `"5-8%"`), `label` | the leading number counts up to its value on `at` |
 | `compare` | `heading`, `left`/`right` (required): `{title, items, at}` | each card rises on its cue, items follow |
 | `image` | `image` (required, path relative to the project), `heading` | the image rises on `at` (missing file = that scene fails, others still render). Draw original diagrams at 1580×600 (16:9), 1170×600 (16:9 with mascot), 920×1000 (9:16) or 920×640 (9:16 with mascot): images are scaled down to fit, never up. See `diagrams.md` |
+| `diagram` | `nodes` (required), `edges`, `groups`, `layout`, `center`, `steps`, `heading`, `continue` | an animated diagram: nodes enter, connectors draw, tokens travel, states, labels and positions change, each on its step's `at` phrase. Full guide: `motion.md` |
 | `end` | `title` (required), `cta` | title, then a call-to-action pill |
 
-Items without `at` are spread evenly across the scene's narration.
+Items (and diagram steps) without `at` are spread evenly across the scene's narration.
 
 ## Cue phrases
 
@@ -57,3 +58,7 @@ Items without `at` are spread evenly across the scene's narration.
 | `only N% of its 'say' text was heard in the recording` | `say` does not match the take: update it to what was recorded |
 | `only 0.6s long (min 0.8s)` | merge the scene with a neighbour or give it more narration |
 | `mascot has no state for pose='x'` | use a state listed by `oex mascot check`, or create `pose-x.png` |
+| `scene s03 steps[2]: unknown id(s) [...]` | use an id from the list printed with it (`draw` takes connector ids only) |
+| `flow path breaks between e1 and e3` | list the connectors of a `path` in travel order, each starting where the last ends |
+| `node(s) [...] have no x, y` | give each node `x` and `y` (0..1), or set `"layout"` |
+| `"continue" needs a diagram scene right after another diagram scene` | remove `continue`, or move the scene |
