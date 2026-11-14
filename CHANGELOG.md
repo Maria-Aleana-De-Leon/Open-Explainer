@@ -5,6 +5,11 @@ All notable changes to this project are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-14
+
+Second public beta: illustrated explainers, more reliable narration and audio, and a cleaner emphasis highlight.
+Tested on macOS only; Linux and Windows are unverified; GitHub Actions CI has not passed yet.
+
 ### Fixed
 - `oex tts` no longer reports success when the engine produced no audio: every provider writes to a temporary file
   that must contain real, audible speech of a plausible length before it replaces the narration. A failure is an

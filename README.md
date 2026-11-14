@@ -1,6 +1,6 @@
 # open-explainer
 
-> **Public beta (v0.1.0).** Tested on macOS only; Linux and Windows are unverified. A GitHub Actions CI workflow is
+> **Public beta (v0.2.0).** Tested on macOS only; Linux and Windows are unverified. A GitHub Actions CI workflow is
 > included but has **not passed yet**: so far the test suite has been run locally on macOS. Please
 > [report problems](https://github.com/Maria-Aleana-De-Leon/Open-Explainer/issues).
 
@@ -80,15 +80,17 @@ macOS is included but has not passed yet. Reports are welcome.
 
 ## Status and known limitations
 
-Version 0.1.0, **public beta**. Known limitations:
+Version 0.2.0, **public beta**. Known limitations:
 
 - GitHub Actions CI has not passed yet; the test suite has only been run locally on macOS.
-
 - Tested on macOS only; Linux and Windows are unverified. 30 fps is tested, 60 fps is not.
+- The free draft voice (macOS `say`) sounds robotic, is macOS-only, and cannot run inside some AI agents'
+  sandboxes (for example Codex): record your own narration for anything you publish.
 - Lip sync is driven by the sound of the voice: cartoon quality, not phoneme-accurate.
 - Custom mascots are tested with the bundled demo mascot and a procedurally drawn stand-in; mascots made with
   image generators may need the repair prompt (`oex prompts 6`).
-- Agent use is exercised with Claude Code; Codex end-to-end runs are not yet verified.
+- Agent use is exercised end to end with Claude Code; Codex finds and reads the skills, but a complete Codex run
+  has not been verified yet.
 - No HTML/CSS render backend and no bundled icon library yet.
 
 ## Credits and licence
