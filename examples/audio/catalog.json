@@ -1,0 +1,243 @@
+{
+ "schema": "oex-sfx-2",
+ "sounds": [
+  {
+   "id": "click-ui",
+   "name": "click-ui",
+   "file": "sfx/click-ui.wav",
+   "kind": "click",
+   "labels": [
+    "bright",
+    "click",
+    "sharp",
+    "short"
+   ],
+   "length_s": 0.03,
+   "loudest_at_s": 0.0,
+   "peak_dbfs": 0.0,
+   "rms_dbfs": -13.1,
+   "brightness_hz": 3327,
+   "onset_s": 0.0,
+   "sha256": "cbf93a7ac187faebc474c02ec0266b8b3ef93edcdad1c05746678891c0256092",
+   "guidance": {
+    "good_for": [],
+    "avoid": []
+   },
+   "rights": {
+    "status": "own",
+    "licence": "MIT",
+    "holder": "open-explainer contributors",
+    "source": null,
+    "credit_line": null
+   }
+  },
+  {
+   "id": "ding-success",
+   "name": "ding-success",
+   "file": "sfx/ding-success.wav",
+   "kind": "chime",
+   "labels": [
+    "ding",
+    "medium",
+    "mid",
+    "sharp",
+    "success"
+   ],
+   "length_s": 1.2,
+   "loudest_at_s": 0.01,
+   "peak_dbfs": -5.7,
+   "rms_dbfs": -20.2,
+   "brightness_hz": 1746,
+   "onset_s": 0.0,
+   "sha256": "ed1263f631bf40900ba8a24563c828d610cecb10d32f2ad8b6e23482a53c5c69",
+   "guidance": {
+    "good_for": [],
+    "avoid": []
+   },
+   "rights": {
+    "status": "own",
+    "licence": "MIT",
+    "holder": "open-explainer contributors",
+    "source": null,
+    "credit_line": null
+   }
+  },
+  {
+   "id": "impact-low",
+   "name": "impact-low",
+   "file": "sfx/impact-low.wav",
+   "kind": "impact",
+   "labels": [
+    "dark",
+    "hit",
+    "medium",
+    "sharp"
+   ],
+   "length_s": 0.7,
+   "loudest_at_s": 0.0,
+   "peak_dbfs": -0.6,
+   "rms_dbfs": -12.8,
+   "brightness_hz": 260,
+   "onset_s": 0.0,
+   "sha256": "39421a7aa8952630a704075d3445824d9a32f92768ea08064a98db894c363b88",
+   "guidance": {
+    "good_for": [],
+    "avoid": []
+   },
+   "rights": {
+    "status": "own",
+    "licence": "MIT",
+    "holder": "open-explainer contributors",
+    "source": null,
+    "credit_line": null
+   }
+  },
+  {
+   "id": "pop-bright",
+   "name": "pop-bright",
+   "file": "sfx/pop-bright.wav",
+   "kind": "pop",
+   "labels": [
+    "mid",
+    "pop",
+    "sharp",
+    "short"
+   ],
+   "length_s": 0.09,
+   "loudest_at_s": 0.0,
+   "peak_dbfs": -3.1,
+   "rms_dbfs": -14.8,
+   "brightness_hz": 804,
+   "onset_s": 0.0,
+   "sha256": "fd18e02e000ed26009ca03b121642b61e970773fd5b50e12367cd8b923a59c2d",
+   "guidance": {
+    "good_for": [],
+    "avoid": []
+   },
+   "rights": {
+    "status": "own",
+    "licence": "MIT",
+    "holder": "open-explainer contributors",
+    "source": null,
+    "credit_line": null
+   }
+  },
+  {
+   "id": "pop-soft",
+   "name": "pop-soft",
+   "file": "sfx/pop-soft.wav",
+   "kind": "pop",
+   "labels": [
+    "dark",
+    "pop",
+    "sharp",
+    "short"
+   ],
+   "length_s": 0.12,
+   "loudest_at_s": 0.0,
+   "peak_dbfs": -3.2,
+   "rms_dbfs": -14.9,
+   "brightness_hz": 427,
+   "onset_s": 0.0,
+   "sha256": "59a17af239ba263c350ff480ad85e426aa8a87d8fef3567af38f85ded27fb7f7",
+   "guidance": {
+    "good_for": [],
+    "avoid": []
+   },
+   "rights": {
+    "status": "own",
+    "licence": "MIT",
+    "holder": "open-explainer contributors",
+    "source": null,
+    "credit_line": null
+   }
+  },
+  {
+   "id": "riser",
+   "name": "riser",
+   "file": "sfx/riser.wav",
+   "kind": "riser",
+   "labels": [
+    "bright",
+    "build-up",
+    "medium"
+   ],
+   "length_s": 1.6,
+   "loudest_at_s": 1.56,
+   "peak_dbfs": -8.5,
+   "rms_dbfs": -27.8,
+   "brightness_hz": 3344,
+   "onset_s": 1.28,
+   "sha256": "c56cddd92fdd2413e96f0acd0202896292fba35b4d4ac431cb17e32292982d34",
+   "guidance": {
+    "good_for": [],
+    "avoid": []
+   },
+   "rights": {
+    "status": "own",
+    "licence": "MIT",
+    "holder": "open-explainer contributors",
+    "source": null,
+    "credit_line": null
+   }
+  },
+  {
+   "id": "whoosh-fast",
+   "name": "whoosh-fast",
+   "file": "sfx/whoosh-fast.wav",
+   "kind": "transition",
+   "labels": [
+    "bright",
+    "short",
+    "whoosh"
+   ],
+   "length_s": 0.45,
+   "loudest_at_s": 0.23,
+   "peak_dbfs": -5.5,
+   "rms_dbfs": -21.6,
+   "brightness_hz": 3229,
+   "onset_s": 0.15,
+   "sha256": "e5ac421fdc866bbca9bf51de3357a9e01f7038028b5782284a1d53afd419938d",
+   "guidance": {
+    "good_for": [],
+    "avoid": []
+   },
+   "rights": {
+    "status": "own",
+    "licence": "MIT",
+    "holder": "open-explainer contributors",
+    "source": null,
+    "credit_line": null
+   }
+  },
+  {
+   "id": "whoosh-soft",
+   "name": "whoosh-soft",
+   "file": "sfx/whoosh-soft.wav",
+   "kind": "transition",
+   "labels": [
+    "bright",
+    "medium",
+    "whoosh"
+   ],
+   "length_s": 0.9,
+   "loudest_at_s": 0.55,
+   "peak_dbfs": -4.4,
+   "rms_dbfs": -20.4,
+   "brightness_hz": 2786,
+   "onset_s": 0.37,
+   "sha256": "821e180246c6d8c664c7fa3c84359a1500f8041179ba035684e6597c10a626b6",
+   "guidance": {
+    "good_for": [],
+    "avoid": []
+   },
+   "rights": {
+    "status": "own",
+    "licence": "MIT",
+    "holder": "open-explainer contributors",
+    "source": null,
+    "credit_line": null
+   }
+  }
+ ]
+}

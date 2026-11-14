@@ -1,0 +1,43 @@
+# environments
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+dist/
+
+# generated per project (safe to delete, rebuilt by oex)
+build/
+renders/
+
+# example narration is generated locally (tools/say_narration.py) and not distributed
+examples/*/audio/narration.*
+
+# generated example mascot review output stays local; source PNGs are committed
+examples/mascots/*/build/
+
+# local agent end-to-end results
+build-agent-e2e.jsonl
+
+# showcase: your own mascot images and your recordings stay local
+showcase/*/my-mascot-goes-here/*.png
+showcase/*/mascot-previous/
+showcase/*/audio/narration*
+showcase/*/mascot/
+
+# tooling caches
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# secrets and local environment
+.env
+.env.*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

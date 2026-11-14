@@ -1,0 +1,8 @@
+{
+  "title": "How email works",
+  "format": "16:9",
+  "fps": 30,
+  "style": "paper",
+  "narration": {"audio": "audio/narration.wav", "language": "en"},
+  "captions": {"burn_in": true}
+}

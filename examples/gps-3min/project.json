@@ -1,0 +1,28 @@
+{
+  "title": "How GPS works",
+  "format": "16:9",
+  "fps": 30,
+  "style": "paper",
+  "narration": {
+    "audio": "audio/narration.wav",
+    "language": "en",
+    "prompt": "GPS, Einstein, quartz, kilometres"
+  },
+  "mascot": {
+    "dir": "../mascots/pip",
+    "position": "left"
+  },
+  "music": {
+    "file": "../audio/music/calm-loop.wav",
+    "license": "MIT (open-explainer demo, synthesised)"
+  },
+  "sfx": {
+    "catalog": "../audio/catalog.json",
+    "auto": true,
+    "max_per_minute": 6,
+    "min_gap": 3.0
+  },
+  "captions": {
+    "burn_in": true
+  }
+}

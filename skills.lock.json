@@ -1,0 +1,29 @@
+{
+ "version": "0.1.0",
+ "skills": {
+  "explainer-director": {
+   "files": 2,
+   "sha256": "e40a9cac040d473e12fbf5aade2a08a99a4fcca77914393c1cb1d4d5cbb6ba2e"
+  },
+  "mascot-prep": {
+   "files": 11,
+   "sha256": "2e50f8b3de19fb8cc47a1249f36120bf146ea91feb765c3fda309a31d7438375"
+  },
+  "render-qa": {
+   "files": 2,
+   "sha256": "5da75c1b15780b9c2efbe4badc2be7438ac185c2f74590cb19cdb8a05dc40692"
+  },
+  "sound-designer": {
+   "files": 2,
+   "sha256": "b98ee0e4bf36eba0961c8f4c48ea588b7e86d7e1d6c970ad020bc76139608887"
+  },
+  "storyboard-builder": {
+   "files": 3,
+   "sha256": "4e34196f3b9edf6055b30bd68ff2a9dffdca4583a87c76b65fe7dad959e6f15b"
+  },
+  "voice-sync": {
+   "files": 2,
+   "sha256": "dbc0ef98d0059e2efd2815ed043058ac52d90e32e1e87c109ce201232a8d2d97"
+  }
+ }
+}

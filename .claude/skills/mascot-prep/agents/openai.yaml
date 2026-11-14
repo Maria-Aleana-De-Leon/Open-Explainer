@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mascot Prep"
+  short_description: "Create and prepare your own talking mascot"
+  default_prompt: "Use $mascot-prep to make my own talking mascot."

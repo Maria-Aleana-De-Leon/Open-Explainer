@@ -1,0 +1,4 @@
+interface:
+  display_name: "Voice Sync"
+  short_description: "Narration intake and word timings"
+  default_prompt: "Use $voice-sync to add my narration and time it."

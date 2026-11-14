@@ -1,0 +1,9 @@
+{
+  "title": "Paano gumagana ang email",
+  "format": "9:16",
+  "style": "pop",
+  "narration": {"audio": "audio/narration.wav", "language": "tl", "prompt": "Taglish: email, outgoing server, inbox, recipient, milliseconds"},
+  "mascot": {"dir": "../mascots/pip", "position": "left"},
+  "sfx": {"catalog": "../audio/catalog.json", "auto": true},
+  "captions": {"burn_in": true}
+}

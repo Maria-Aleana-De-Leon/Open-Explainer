@@ -1,0 +1,2 @@
+These sounds and music were synthesised by tools/make_demo_audio.py for
+open-explainer and are released under the MIT License.

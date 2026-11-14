@@ -1,0 +1,98 @@
+{
+ "scenes": [
+  {
+   "id": "s01",
+   "type": "title",
+   "say": "Hi, I'm Pip! Ever wonder why the sky is blue?",
+   "title": "Why is the sky *blue*?",
+   "mascot": [
+    {
+     "at": "Pip",
+     "pose": "wave",
+     "for": 1.6
+    },
+    {
+     "at": "sky",
+     "expression": "thinking",
+     "for": 1.4
+    }
+   ]
+  },
+  {
+   "id": "s02",
+   "type": "bullets",
+   "say": "Sunlight looks white, but it is really every colour mixed together. When it hits the air, the tiny gas molecules scatter blue light the most.",
+   "heading": "What happens",
+   "items": [
+    {
+     "text": "Sunlight holds every colour",
+     "at": "every colour"
+    },
+    {
+     "text": "Air molecules scatter it",
+     "at": "scatter"
+    },
+    {
+     "text": "*Blue* scatters the most",
+     "at": "blue light"
+    }
+   ],
+   "mascot": [
+    {
+     "at": "every colour",
+     "pose": "present"
+    },
+    {
+     "at": "blue light",
+     "pose": "point",
+     "for": 1.5
+    }
+   ]
+  },
+  {
+   "id": "s03",
+   "type": "statement",
+   "say": "So wherever you look, scattered blue light is coming at you from every direction.",
+   "text": "Blue light comes from *everywhere*",
+   "emphasis": "every direction",
+   "mascot": [
+    {
+     "at": "wherever",
+     "pose": "neutral"
+    },
+    {
+     "at": "every direction",
+     "expression": "happy",
+     "for": 1.2
+    }
+   ]
+  },
+  {
+   "id": "s03b",
+   "type": "statement",
+   "say": "And sunsets look orange because the light crosses so much air that most of the blue is scattered away before it reaches you.",
+   "text": "Sunsets: the blue is *scattered away*",
+   "emphasis": "scattered away",
+   "mascot": [
+    {
+     "at": "sunsets",
+     "pose": "present",
+     "for": 2.0
+    }
+   ]
+  },
+  {
+   "id": "s04",
+   "type": "end",
+   "say": "That's the sky, explained. See you next time!",
+   "title": "Sky, explained",
+   "cta": "Follow for more",
+   "mascot": [
+    {
+     "at": "See you",
+     "pose": "wave"
+    }
+   ]
+  }
+ ]
+}

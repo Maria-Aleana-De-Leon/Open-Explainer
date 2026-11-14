@@ -1,0 +1,187 @@
+{
+ "scenes": [
+  {
+   "id": "hook",
+   "type": "title",
+   "say": "Imagine telling your computer: plan my trip to Tokyo. And instead of just answering, it actually does it.",
+   "title": "It doesn't just answer. It *does it*.",
+   "subtitle": "How AI agents work, in 60 seconds",
+   "emphasis": "actually does it",
+   "mascot": [
+    {
+     "at": "Imagine",
+     "pose": "wave",
+     "for": 1.4
+    },
+    {
+     "at": "actually does it",
+     "expression": "surprised",
+     "for": 1.0
+    }
+   ],
+   "at": "instead of just answering"
+  },
+  {
+   "id": "versus",
+   "type": "compare",
+   "say": "That is the difference between a chatbot and an AI agent. A chatbot talks. An agent takes action, step by step, until the job is done.",
+   "heading": "Chatbot vs agent",
+   "left": {
+    "title": "Chatbot",
+    "items": [
+     "Answers questions",
+     "Stops at a reply"
+    ],
+    "at": "A chatbot talks"
+   },
+   "right": {
+    "title": "AI agent",
+    "items": [
+     "Takes actions",
+     "Works step by step"
+    ],
+    "at": "An agent takes action"
+   },
+   "mascot": [
+    {
+     "at": "difference",
+     "pose": "present",
+     "for": 2.0
+    }
+   ]
+  },
+  {
+   "id": "loop",
+   "type": "flow",
+   "layout": "cycle",
+   "say": "Every agent runs the same simple loop. It looks at the goal, makes a plan, takes an action, and then checks the result.",
+   "heading": "The agent loop",
+   "items": [
+    {
+     "text": "Look",
+     "at": "looks at the goal"
+    },
+    {
+     "text": "Plan",
+     "at": "makes a plan"
+    },
+    {
+     "text": "Act",
+     "at": "takes an action"
+    },
+    {
+     "text": "Check",
+     "at": "checks the result"
+    }
+   ],
+   "mascot": [
+    {
+     "at": "simple loop",
+     "pose": "point",
+     "for": 1.6
+    }
+   ]
+  },
+  {
+   "id": "tools",
+   "type": "bullets",
+   "say": "The actions come from tools. A web search, a calendar, a code runner, even your email. The agent picks the right tool for each step.",
+   "heading": "Actions come from *tools*",
+   "items": [
+    {
+     "text": "Web search",
+     "at": "web search"
+    },
+    {
+     "text": "Calendar",
+     "at": "a calendar"
+    },
+    {
+     "text": "Code runner",
+     "at": "code runner"
+    },
+    {
+     "text": "Email",
+     "at": "your email"
+    }
+   ]
+  },
+  {
+   "id": "trip",
+   "type": "flow",
+   "say": "So for your trip, it searches for flights, compares the prices, books the best one, and adds it to your calendar.",
+   "heading": "Your Tokyo trip",
+   "items": [
+    {
+     "text": "Search flights",
+     "at": "searches for flights"
+    },
+    {
+     "text": "Compare prices",
+     "at": "compares the prices"
+    },
+    {
+     "text": "Book the best",
+     "at": "books the best"
+    },
+    {
+     "text": "Add to calendar",
+     "at": "adds it to your calendar"
+    }
+   ],
+   "mascot": [
+    {
+     "at": "your trip",
+     "pose": "present",
+     "for": 1.6
+    }
+   ]
+  },
+  {
+   "id": "retry",
+   "type": "statement",
+   "say": "And if something goes wrong, like a sold out flight, it notices, rethinks, and tries again. That loop is what makes it an agent.",
+   "text": "The *loop* is what makes it an agent",
+   "emphasis": "That loop",
+   "mascot": [
+    {
+     "at": "rethinks",
+     "expression": "thinking",
+     "for": 1.3
+    }
+   ]
+  },
+  {
+   "id": "safety",
+   "type": "statement",
+   "say": "Good agents also know when to stop and ask you, especially before they spend your money or send a message.",
+   "text": "Good agents *ask first*",
+   "emphasis": "ask you",
+   "mascot": [
+    {
+     "at": "stop and ask",
+     "pose": "point",
+     "for": 1.5
+    }
+   ]
+  },
+  {
+   "id": "outro",
+   "type": "end",
+   "say": "So an AI agent is a model, plus tools, plus a loop. Follow for more simple AI explainers.",
+   "title": "Model + tools + *loop*",
+   "cta": "Follow for more",
+   "mascot": [
+    {
+     "at": "plus a loop",
+     "expression": "happy",
+     "for": 1.2
+    },
+    {
+     "at": "Follow",
+     "pose": "wave"
+    }
+   ]
+  }
+ ]
+}

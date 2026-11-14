@@ -1,0 +1,4 @@
+interface:
+  display_name: "Render & QA"
+  short_description: "Render, regenerate and verify explainer films"
+  default_prompt: "Use $render-qa to render and check my film."

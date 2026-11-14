@@ -1,0 +1,11 @@
+{"scenes": [
+ {"id":"s01","type":"title","say":"Kumusta kayo! Ngayon, pag-usapan natin kung paano gumagana ang email.","title":"Paano gumagana ang *email*?","subtitle":"Isang mabilis na paliwanag",
+  "mascot":[{"at":"Kumusta","pose":"wave","for":1.5}]},
+ {"id":"s02","type":"flow","say":"Kapag nag-send ka ng message, pupunta muna ito sa outgoing server. Tapos, hahanapin ng server kung saan ang inbox ng recipient.","heading":"Ang biyahe ng email",
+  "items":[{"text":"Ikaw","at":"nag-send"},{"text":"Outgoing server","at":"outgoing server"},{"text":"Inbox ng recipient","at":"inbox"}],
+  "mascot":[{"at":"outgoing","pose":"present"}]},
+ {"id":"s03","type":"statement","say":"Parang post office siya, pero super bilis. Milliseconds lang ang bawat hop.","text":"Parang post office, pero *super bilis*","emphasis":"super bilis",
+  "mascot":[{"at":"super bilis","expression":"happy","for":1.2}]},
+ {"id":"s04","type":"end","say":"Salamat sa panonood, and see you sa next video!","title":"Salamat!","cta":"I-follow para sa iba pa",
+  "mascot":[{"at":"see you","pose":"wave"}]}
+]}

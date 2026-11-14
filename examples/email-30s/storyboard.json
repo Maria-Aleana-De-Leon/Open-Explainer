@@ -1,0 +1,19 @@
+{
+  "scenes": [
+    {"id": "s01", "type": "title",
+     "say": "Every day, people send over three hundred billion emails. So how does one actually reach you?",
+     "title": "How does *email* reach you?", "subtitle": "A 30-second tour"},
+    {"id": "s02", "type": "flow",
+     "say": "First, your app hands the message to an outgoing server. That server looks up where the recipient lives, then passes it along to their inbox server.",
+     "heading": "The journey",
+     "items": [{"text": "Your app", "at": "your app"},
+               {"text": "Outgoing server", "at": "outgoing server"},
+               {"text": "Their inbox", "at": "their inbox"}]},
+    {"id": "s03", "type": "statement",
+     "say": "Think of it like a postal service, but every hop takes milliseconds instead of days.",
+     "text": "A postal service in *milliseconds*", "emphasis": "milliseconds"},
+    {"id": "s04", "type": "end",
+     "say": "That's email in thirty seconds. Follow for more quick explainers.",
+     "title": "Email, explained", "cta": "Follow for more"}
+  ]
+}

@@ -1,0 +1,386 @@
+{
+ "scenes": [
+  {
+   "id": "hook",
+   "type": "title",
+   "say": "Your phone knows where you are to within a few metres. But it never sends a single signal to space. So how does it do that?",
+   "title": "How does *GPS* find you?",
+   "subtitle": "Satellites, clocks and a little geometry",
+   "mascot": [
+    {
+     "at": "knows",
+     "pose": "wave",
+     "for": 1.5
+    },
+    {
+     "at": "how does it",
+     "expression": "thinking",
+     "for": 1.5
+    }
+   ]
+  },
+  {
+   "id": "listen",
+   "type": "statement",
+   "say": "Here is the surprising part. Your phone only listens. GPS satellites are constantly broadcasting, and your phone simply picks up what they shout.",
+   "text": "Your phone only *listens*",
+   "emphasis": "only listens",
+   "mascot": [
+    {
+     "at": "surprising",
+     "expression": "surprised",
+     "for": 1.2
+    }
+   ]
+  },
+  {
+   "id": "fleet",
+   "type": "number",
+   "say": "There are about thirty one GPS satellites in orbit, around twenty thousand kilometres above the Earth.",
+   "value": "31",
+   "label": "GPS satellites, about 20,000 km up",
+   "at": "thirty one",
+   "mascot": [
+    {
+     "at": "thirty one",
+     "pose": "present"
+    }
+   ]
+  },
+  {
+   "id": "history",
+   "type": "number",
+   "say": "GPS began as a military project in the nineteen seventies. In two thousand, the United States switched off a deliberate error that made civilian positions less accurate, and car navigation took off.",
+   "value": "2000",
+   "label": "the year full accuracy opened to everyone",
+   "at": "two thousand",
+   "mascot": [
+    {
+     "at": "took off",
+     "expression": "happy",
+     "for": 1.2
+    }
+   ]
+  },
+  {
+   "id": "message",
+   "type": "bullets",
+   "say": "Each satellite repeats a simple message. It says who it is, exactly where it is, and the precise time it sent the message.",
+   "heading": "Every message says",
+   "items": [
+    {
+     "text": "Who it is",
+     "at": "who it is"
+    },
+    {
+     "text": "Exactly where it is",
+     "at": "exactly where"
+    },
+    {
+     "text": "The precise time it was sent",
+     "at": "precise time"
+    }
+   ],
+   "mascot": [
+    {
+     "at": "who it is",
+     "pose": "point",
+     "for": 1.5
+    }
+   ]
+  },
+  {
+   "id": "trip",
+   "type": "number",
+   "say": "That message takes about seven hundredths of a second to reach you. It is a tiny gap, but your phone can measure it very precisely.",
+   "value": "0.07 s",
+   "label": "for a signal to reach your phone",
+   "at": "seven hundredths"
+  },
+  {
+   "id": "delay",
+   "type": "flow",
+   "say": "When the message arrives, your phone compares the send time with its own clock. The tiny delay tells it how far away that satellite is.",
+   "heading": "Time becomes distance",
+   "items": [
+    {
+     "text": "Send time",
+     "at": "compares"
+    },
+    {
+     "text": "Arrival time",
+     "at": "own clock"
+    },
+    {
+     "text": "Distance",
+     "at": "how far away"
+    }
+   ]
+  },
+  {
+   "id": "almanac",
+   "type": "bullets",
+   "say": "When your phone first switches on, it does not know which satellites are overhead. It downloads a rough timetable called the almanac, guesses which satellites to listen for, and then locks on.",
+   "heading": "Finding the satellites",
+   "items": [
+    {
+     "text": "Download the almanac",
+     "at": "rough timetable"
+    },
+    {
+     "text": "Guess who is overhead",
+     "at": "guesses"
+    },
+    {
+     "text": "Lock on",
+     "at": "locks on"
+    }
+   ]
+  },
+  {
+   "id": "assisted",
+   "type": "compare",
+   "say": "Phones cheat a little. Instead of waiting minutes for the almanac from space, they fetch it over the internet in seconds. That is called assisted GPS, and it is why your map is ready almost instantly.",
+   "heading": "Why your map is ready so fast",
+   "left": {
+    "title": "Plain GPS",
+    "items": [
+     "Almanac from space",
+     "Can take minutes"
+    ],
+    "at": "waiting minutes"
+   },
+   "right": {
+    "title": "Assisted GPS",
+    "items": [
+     "Almanac over the internet",
+     "Ready in seconds"
+    ],
+    "at": "over the internet"
+   },
+   "mascot": [
+    {
+     "at": "cheat",
+     "expression": "confused",
+     "for": 1.2
+    },
+    {
+     "at": "assisted GPS",
+     "pose": "point",
+     "for": 1.5
+    }
+   ]
+  },
+  {
+   "id": "speed",
+   "type": "statement",
+   "say": "Radio travels at the speed of light, so a delay of one millionth of a second means about three hundred metres.",
+   "text": "One *millionth* of a second = 300 metres",
+   "emphasis": "three hundred metres",
+   "mascot": [
+    {
+     "at": "three hundred",
+     "expression": "surprised",
+     "for": 1.2
+    }
+   ]
+  },
+  {
+   "id": "spheres",
+   "type": "flow",
+   "say": "One distance puts you somewhere on a giant sphere. A second satellite narrows that to a circle. A third leaves just two points, and one of them is out in space.",
+   "heading": "Narrowing it down",
+   "items": [
+    {
+     "text": "1 satellite: a sphere",
+     "at": "giant sphere"
+    },
+    {
+     "text": "2: a circle",
+     "at": "a circle"
+    },
+    {
+     "text": "3: two points",
+     "at": "two points"
+    }
+   ],
+   "mascot": [
+    {
+     "at": "giant sphere",
+     "pose": "present"
+    }
+   ]
+  },
+  {
+   "id": "clock",
+   "type": "compare",
+   "say": "There is a catch. Satellites carry atomic clocks, but your phone has a cheap quartz clock that drifts. So your phone listens to a fourth satellite and solves for its own clock error too.",
+   "heading": "The clock problem",
+   "left": {
+    "title": "Satellite",
+    "items": [
+     "Atomic clock",
+     "Accurate to billionths"
+    ],
+    "at": "atomic clocks"
+   },
+   "right": {
+    "title": "Your phone",
+    "items": [
+     "Cheap quartz clock",
+     "Fixed by a 4th satellite"
+    ],
+    "at": "cheap quartz"
+   },
+   "mascot": [
+    {
+     "at": "catch",
+     "expression": "confused",
+     "for": 1.4
+    },
+    {
+     "at": "fourth satellite",
+     "pose": "point",
+     "for": 1.5
+    }
+   ]
+  },
+  {
+   "id": "relativity",
+   "type": "statement",
+   "say": "Even Einstein shows up. Clocks in orbit tick slightly faster than clocks on the ground, so engineers correct for relativity every single day.",
+   "text": "Even *Einstein* shows up",
+   "emphasis": "Einstein",
+   "mascot": [
+    {
+     "at": "Einstein",
+     "expression": "happy",
+     "for": 1.4
+    }
+   ]
+  },
+  {
+   "id": "error",
+   "type": "number",
+   "say": "Without that correction, your position would drift by about ten kilometres a day.",
+   "value": "10 km",
+   "label": "of drift per day without relativity",
+   "at": "ten kilometres"
+  },
+  {
+   "id": "weak",
+   "type": "statement",
+   "say": "By the time a signal reaches you, it is fainter than the background noise around it. Your phone digs it out by searching for a known pattern that each satellite repeats over and over.",
+   "text": "Fainter than *background noise*",
+   "emphasis": "background noise",
+   "mascot": [
+    {
+     "at": "fainter",
+     "expression": "surprised",
+     "for": 1.2
+    }
+   ]
+  },
+  {
+   "id": "others",
+   "type": "bullets",
+   "say": "GPS is American, but it is not alone. Europe runs Galileo, Russia runs GLONASS, and China runs BeiDou. Modern phones listen to all of them at once.",
+   "heading": "Not just GPS",
+   "items": [
+    {
+     "text": "Galileo (Europe)",
+     "at": "Galileo"
+    },
+    {
+     "text": "GLONASS (Russia)",
+     "at": "GLONASS"
+    },
+    {
+     "text": "BeiDou (China)",
+     "at": "BeiDou"
+    }
+   ],
+   "mascot": [
+    {
+     "at": "Europe",
+     "pose": "present"
+    }
+   ]
+  },
+  {
+   "id": "cities",
+   "type": "statement",
+   "say": "In big cities, signals bounce off tall buildings before they reach you, which adds extra delay. That is why your blue dot sometimes jumps across the street.",
+   "text": "Buildings *bounce* the signal",
+   "emphasis": "bounce",
+   "mascot": [
+    {
+     "at": "jumps",
+     "expression": "confused",
+     "for": 1.4
+    }
+   ]
+  },
+  {
+   "id": "accuracy",
+   "type": "number",
+   "say": "On a good day, with a clear view of the sky, your phone knows where you are to within about five metres.",
+   "value": "5 m",
+   "label": "typical phone accuracy under open sky",
+   "at": "five metres"
+  },
+  {
+   "id": "recap",
+   "type": "bullets",
+   "say": "So, to recap. Satellites broadcast time and position. Your phone turns delays into distances. Four distances pin down where you are.",
+   "heading": "Recap",
+   "items": [
+    {
+     "text": "Satellites broadcast time + position",
+     "at": "broadcast time"
+    },
+    {
+     "text": "Delays become distances",
+     "at": "delays into distances"
+    },
+    {
+     "text": "Four distances find you",
+     "at": "four distances"
+    }
+   ],
+   "mascot": [
+    {
+     "at": "recap",
+     "pose": "present"
+    }
+   ]
+  },
+  {
+   "id": "privacy",
+   "type": "statement",
+   "say": "And because your phone only listens, the satellites never learn where you are. Apps that share your location do that separately, over the internet.",
+   "text": "Satellites never learn *where you are*",
+   "emphasis": "never learn",
+   "mascot": [
+    {
+     "at": "never learn",
+     "pose": "point",
+     "for": 1.5
+    }
+   ]
+  },
+  {
+   "id": "end",
+   "type": "end",
+   "say": "And that's GPS. Next time your map snaps to your street, you'll know about the clocks in the sky. Thanks for watching.",
+   "title": "GPS, explained",
+   "cta": "Follow for more explainers",
+   "mascot": [
+    {
+     "at": "Thanks",
+     "pose": "wave"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,2 @@
+Pip, the open-explainer demo mascot, was drawn by tools/make_demo_mascot.py.
+It is part of open-explainer and is released under the MIT License.

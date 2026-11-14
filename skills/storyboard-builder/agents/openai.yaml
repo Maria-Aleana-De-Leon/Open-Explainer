@@ -1,0 +1,4 @@
+interface:
+  display_name: "Storyboard Builder"
+  short_description: "Write and fix explainer storyboards"
+  default_prompt: "Use $storyboard-builder to turn my script into a storyboard."

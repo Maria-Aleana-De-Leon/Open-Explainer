@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sound Designer"
+  short_description: "Licensed SFX catalog, cues and music"
+  default_prompt: "Use $sound-designer to add sound effects and music."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Explainer Director"
+  short_description: "Make a narrated explainer video end to end"
+  default_prompt: "Use $explainer-director to make an explainer video about "

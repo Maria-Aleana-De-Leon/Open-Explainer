@@ -1,0 +1,467 @@
+{
+ "scenes": [
+  {
+   "id": "s01",
+   "type": "title",
+   "say": "Flip a switch and the light comes on, instantly. But the electricity lighting your room was made only a fraction of a second ago, maybe hundreds of kilometres away. Let's follow it home.",
+   "title": "How electricity *gets home*",
+   "subtitle": "From the power station to your wall socket"
+  },
+  {
+   "id": "s02",
+   "type": "statement",
+   "say": "The first thing to know is that the grid has almost no storage. Every moment, power stations must produce exactly as much electricity as everyone is using.",
+   "text": "Supply must match demand *every second*",
+   "emphasis": "every moment"
+  },
+  {
+   "id": "s03",
+   "type": "bullets",
+   "say": "Most electricity starts with something spinning. Steam from burning gas or coal can spin a turbine. So can water falling through a dam, or wind pushing on giant blades.",
+   "heading": "Something spins",
+   "items": [
+    {
+     "text": "Steam from gas or coal",
+     "at": "steam"
+    },
+    {
+     "text": "Water through a dam",
+     "at": "water"
+    },
+    {
+     "text": "Wind on giant blades",
+     "at": "wind"
+    }
+   ]
+  },
+  {
+   "id": "s04",
+   "type": "statement",
+   "say": "Solar panels are the exception. They turn light straight into electricity, with no moving parts at all.",
+   "text": "Solar: *no moving parts*",
+   "emphasis": "no moving parts"
+  },
+  {
+   "id": "s05",
+   "type": "flow",
+   "say": "Inside a generator, the spinning shaft turns magnets past coils of copper wire. A moving magnetic field pushes electrons along the wire, and that push is electricity.",
+   "heading": "Inside a generator",
+   "items": [
+    {
+     "text": "Spinning shaft",
+     "at": "spinning shaft"
+    },
+    {
+     "text": "Magnets pass copper coils",
+     "at": "magnets"
+    },
+    {
+     "text": "Electrons pushed along",
+     "at": "pushes electrons"
+    }
+   ]
+  },
+  {
+   "id": "s06",
+   "type": "number",
+   "say": "In most of Europe and Asia, generators spin in step with the grid, flipping the current back and forth fifty times every second.",
+   "value": "50",
+   "label": "times per second the current reverses",
+   "at": "fifty times"
+  },
+  {
+   "id": "h01",
+   "type": "compare",
+   "say": "Why does the current flip back and forth at all? In the eighteen eighties, Thomas Edison championed direct current, while Nikola Tesla and George Westinghouse backed alternating current.",
+   "heading": "The current war",
+   "left": {
+    "title": "Edison",
+    "items": [
+     "Direct current",
+     "Hard to change voltage"
+    ],
+    "at": "Edison"
+   },
+   "right": {
+    "title": "Tesla and Westinghouse",
+    "items": [
+     "Alternating current",
+     "Easy to transform"
+    ],
+    "at": "Tesla"
+   }
+  },
+  {
+   "id": "h02",
+   "type": "statement",
+   "say": "Alternating current won, mostly because its voltage is easy to change with a transformer. That one advantage shaped every grid on the planet.",
+   "text": "AC won because voltage is *easy to change*",
+   "emphasis": "easy to change"
+  },
+  {
+   "id": "s07",
+   "type": "compare",
+   "say": "Here is a problem. Sending power over long wires wastes energy as heat, and the higher the current, the bigger the loss. So engineers trade current for voltage.",
+   "heading": "The long-distance problem",
+   "left": {
+    "title": "High current",
+    "items": [
+     "Wires heat up",
+     "Energy lost"
+    ],
+    "at": "higher the current"
+   },
+   "right": {
+    "title": "High voltage",
+    "items": [
+     "Same power",
+     "Far less loss"
+    ],
+    "at": "trade current for voltage"
+   }
+  },
+  {
+   "id": "s08",
+   "type": "flow",
+   "say": "A transformer at the power station steps the voltage up, often to hundreds of thousands of volts, before the power leaves on the tall transmission towers.",
+   "heading": "Step up",
+   "items": [
+    {
+     "text": "Generator",
+     "at": "transformer"
+    },
+    {
+     "text": "Step-up transformer",
+     "at": "steps the voltage up"
+    },
+    {
+     "text": "Transmission towers",
+     "at": "tall transmission"
+    }
+   ]
+  },
+  {
+   "id": "s09",
+   "type": "number",
+   "say": "Some long-distance lines carry four hundred thousand volts, enough that the air near the wires can crackle and hum.",
+   "value": "400,000",
+   "label": "volts on long-distance lines",
+   "at": "four hundred thousand"
+  },
+  {
+   "id": "s10",
+   "type": "statement",
+   "say": "Those lines connect power stations across whole countries into one giant network called the grid. If one station trips offline, others pick up the slack.",
+   "text": "One giant network: *the grid*",
+   "emphasis": "the grid"
+  },
+  {
+   "id": "g01",
+   "type": "statement",
+   "say": "Because supply and demand must match, the grid's frequency is a live health signal. If demand outruns supply, the generators slow down very slightly, and the frequency starts to fall.",
+   "text": "Frequency is the grid's *pulse*",
+   "emphasis": "health signal"
+  },
+  {
+   "id": "g02",
+   "type": "flow",
+   "say": "Operators respond in layers. Spinning generators resist the change for a few seconds, automatic reserves kick in within seconds, and slower plants are started over the next few minutes.",
+   "heading": "Keeping the pulse steady",
+   "items": [
+    {
+     "text": "Spinning inertia",
+     "at": "spinning generators"
+    },
+    {
+     "text": "Automatic reserves",
+     "at": "automatic reserves"
+    },
+    {
+     "text": "More plants start",
+     "at": "slower plants"
+    }
+   ]
+  },
+  {
+   "id": "g03",
+   "type": "statement",
+   "say": "When those layers fail, you get a blackout. Large blackouts are rare, but they show how tightly connected the whole system is.",
+   "text": "When it fails: *blackout*",
+   "emphasis": "blackout"
+  },
+  {
+   "id": "s11",
+   "type": "bullets",
+   "say": "Grid operators watch the network around the clock. They forecast demand, schedule which plants run, and react within seconds when something changes.",
+   "heading": "Grid operators",
+   "items": [
+    {
+     "text": "Forecast demand",
+     "at": "forecast demand"
+    },
+    {
+     "text": "Schedule power plants",
+     "at": "schedule"
+    },
+    {
+     "text": "React within seconds",
+     "at": "react within seconds"
+    }
+   ]
+  },
+  {
+   "id": "s12",
+   "type": "statement",
+   "say": "Demand has a daily rhythm. It rises when people wake up, dips in the afternoon, and peaks in the evening when everyone gets home and starts cooking.",
+   "text": "Demand peaks in the *evening*",
+   "emphasis": "peaks in the evening"
+  },
+  {
+   "id": "s13",
+   "type": "flow",
+   "say": "Near towns, the power reaches a substation. Transformers there step the voltage down, and smaller distribution lines carry it along the streets.",
+   "heading": "Step down",
+   "items": [
+    {
+     "text": "Transmission line",
+     "at": "reaches a substation"
+    },
+    {
+     "text": "Substation",
+     "at": "step the voltage down"
+    },
+    {
+     "text": "Street lines",
+     "at": "distribution lines"
+    }
+   ]
+  },
+  {
+   "id": "l01",
+   "type": "number",
+   "say": "Even with high voltage, some energy is lost on the way. In many grids, around five to eight percent of electricity disappears as heat in wires and transformers.",
+   "value": "5-8%",
+   "label": "lost as heat on the way",
+   "at": "five to eight percent"
+  },
+  {
+   "id": "s14",
+   "type": "statement",
+   "say": "One last transformer, often a grey can on a pole or a green box on the pavement, lowers the voltage again to what your home can safely use.",
+   "text": "The last step: *a box on your street*",
+   "emphasis": "green box"
+  },
+  {
+   "id": "s15",
+   "type": "number",
+   "say": "In many countries that is around two hundred and thirty volts. In North America it is about one hundred and twenty.",
+   "value": "230 V",
+   "label": "at the socket in many countries",
+   "at": "two hundred and thirty"
+  },
+  {
+   "id": "s16",
+   "type": "bullets",
+   "say": "At your home, the power passes a meter that records how much you use, then a panel of breakers. Each breaker protects one circuit and cuts the power if too much current flows.",
+   "heading": "Inside your home",
+   "items": [
+    {
+     "text": "Meter: measures use",
+     "at": "meter"
+    },
+    {
+     "text": "Breaker panel",
+     "at": "panel of breakers"
+    },
+    {
+     "text": "Cuts power on overload",
+     "at": "cuts the power"
+    }
+   ]
+  },
+  {
+   "id": "m01",
+   "type": "bullets",
+   "say": "Many homes now have smart meters. They send readings automatically, can show your use hour by hour, and help the grid plan for busy times.",
+   "heading": "Smart meters",
+   "items": [
+    {
+     "text": "Automatic readings",
+     "at": "send readings"
+    },
+    {
+     "text": "Hour-by-hour use",
+     "at": "hour by hour"
+    },
+    {
+     "text": "Help plan busy times",
+     "at": "busy times"
+    }
+   ]
+  },
+  {
+   "id": "m02",
+   "type": "statement",
+   "say": "And a quick safety reminder. Never touch fallen power lines, and keep water away from sockets. The same push that lights your room can be dangerous.",
+   "text": "Respect the *push*",
+   "emphasis": "dangerous"
+  },
+  {
+   "id": "s17",
+   "type": "statement",
+   "say": "And here is something surprising. The electrons themselves barely move. They drift along the wire slower than a snail. What travels fast is the push, the energy passed from one electron to the next.",
+   "text": "Electrons crawl. The *push* races.",
+   "emphasis": "the push"
+  },
+  {
+   "id": "s18",
+   "type": "compare",
+   "say": "Renewables are changing the grid. Sun and wind cannot be switched on when needed, so grids are adding batteries and smarter controls to store power and balance it.",
+   "heading": "A changing grid",
+   "left": {
+    "title": "Old grid",
+    "items": [
+     "Plants follow demand",
+     "Little storage"
+    ],
+    "at": "changing the grid"
+   },
+   "right": {
+    "title": "New grid",
+    "items": [
+     "Weather-driven supply",
+     "Batteries + smart control"
+    ],
+    "at": "adding batteries"
+   }
+  },
+  {
+   "id": "s19",
+   "type": "number",
+   "say": "Grid-scale battery storage has grown more than tenfold in just a few years.",
+   "value": "10x",
+   "label": "growth in grid batteries in a few years",
+   "at": "tenfold"
+  },
+  {
+   "id": "x01",
+   "type": "flow",
+   "say": "Pumped hydro is the oldest big battery. When power is cheap, water is pumped uphill into a reservoir. When demand peaks, it flows back down through turbines.",
+   "heading": "The oldest big battery",
+   "items": [
+    {
+     "text": "Cheap power",
+     "at": "power is cheap"
+    },
+    {
+     "text": "Pump water uphill",
+     "at": "pumped uphill"
+    },
+    {
+     "text": "Release at the peak",
+     "at": "flows back down"
+    }
+   ]
+  },
+  {
+   "id": "x02",
+   "type": "number",
+   "say": "Pumped hydro and big batteries give back around eighty to ninety percent of the energy put into them.",
+   "value": "80-90%",
+   "label": "of stored energy comes back",
+   "at": "eighty to ninety percent"
+  },
+  {
+   "id": "x03",
+   "type": "statement",
+   "say": "Some grids now pay people to use less power at peak times, which is often cheaper than building a new power station.",
+   "text": "Using less can be *cheaper* than building more",
+   "emphasis": "cheaper"
+  },
+  {
+   "id": "x04",
+   "type": "flow",
+   "say": "Electric cars could help too. Parked and plugged in, millions of car batteries could charge when power is cheap and give some back when it is scarce.",
+   "heading": "Cars as a battery",
+   "items": [
+    {
+     "text": "Plugged in",
+     "at": "plugged in"
+    },
+    {
+     "text": "Charge when cheap",
+     "at": "charge when power is cheap"
+    },
+    {
+     "text": "Give back when scarce",
+     "at": "give some back"
+    }
+   ]
+  },
+  {
+   "id": "x05",
+   "type": "statement",
+   "say": "Long distance links are changing as well. New high voltage direct current lines carry power between countries with less loss than alternating current.",
+   "text": "Direct current is *back* for long links",
+   "emphasis": "direct current"
+  },
+  {
+   "id": "x06",
+   "type": "bullets",
+   "say": "At home, the biggest users are usually heating, cooling, water heaters and old fridges. Small changes there save far more than unplugging a phone charger.",
+   "heading": "Where your power goes",
+   "items": [
+    {
+     "text": "Heating and cooling",
+     "at": "heating, cooling"
+    },
+    {
+     "text": "Water heaters",
+     "at": "water heaters"
+    },
+    {
+     "text": "Old fridges",
+     "at": "old fridges"
+    }
+   ]
+  },
+  {
+   "id": "s20",
+   "type": "bullets",
+   "say": "So, the whole journey. Something spins or the sun shines. Transformers step the voltage up for the long trip. Substations and street boxes step it back down. And your breakers keep it safe.",
+   "heading": "The whole journey",
+   "items": [
+    {
+     "text": "Generate",
+     "at": "spins"
+    },
+    {
+     "text": "Step up and transmit",
+     "at": "long trip"
+    },
+    {
+     "text": "Step down",
+     "at": "back down"
+    },
+    {
+     "text": "Protect at home",
+     "at": "keep it safe"
+    }
+   ]
+  },
+  {
+   "id": "s21",
+   "type": "statement",
+   "say": "All of that happens in the instant between flipping the switch and the light coming on.",
+   "text": "All in an *instant*",
+   "emphasis": "instant"
+  },
+  {
+   "id": "s22",
+   "type": "end",
+   "say": "Thanks for following the electricity home. If you learned something, share this with a friend.",
+   "title": "Power, explained",
+   "cta": "Share with a friend"
+  }
+ ]
+}

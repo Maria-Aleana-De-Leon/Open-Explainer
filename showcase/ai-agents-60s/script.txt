@@ -1,0 +1,15 @@
+Imagine telling your computer: plan my trip to Tokyo. And instead of just answering, it actually does it.
+
+That is the difference between a chatbot and an AI agent. A chatbot talks. An agent takes action, step by step, until the job is done.
+
+Every agent runs the same simple loop. It looks at the goal, makes a plan, takes an action, and then checks the result.
+
+The actions come from tools. A web search, a calendar, a code runner, even your email. The agent picks the right tool for each step.
+
+So for your trip, it searches for flights, compares the prices, books the best one, and adds it to your calendar.
+
+And if something goes wrong, like a sold out flight, it notices, rethinks, and tries again. That loop is what makes it an agent.
+
+Good agents also know when to stop and ask you, especially before they spend your money or send a message.
+
+So an AI agent is a model, plus tools, plus a loop. Follow for more simple AI explainers.

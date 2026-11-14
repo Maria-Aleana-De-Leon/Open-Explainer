@@ -1,0 +1,9 @@
+{
+  "title": "Why the sky is blue",
+  "format": "9:16",
+  "fps": 30,
+  "style": "midnight",
+  "narration": {"audio": "audio/narration.wav", "language": "en"},
+  "mascot": {"dir": "../mascots/pip", "position": "left", "scale": 1.0},
+  "captions": {"burn_in": true}
+}

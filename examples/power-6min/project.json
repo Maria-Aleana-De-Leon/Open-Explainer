@@ -1,0 +1,18 @@
+{
+  "title": "How electricity gets home",
+  "format": "16:9",
+  "fps": 30,
+  "style": "chalk",
+  "narration": {
+    "audio": "audio/narration.wav",
+    "language": "en",
+    "prompt": "substation, transformer, kilometres, volts"
+  },
+  "music": {
+    "file": "../audio/music/calm-loop.wav",
+    "license": "MIT (open-explainer demo, synthesised)"
+  },
+  "captions": {
+    "burn_in": true
+  }
+}
