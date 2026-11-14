@@ -164,6 +164,11 @@ def build(proj: Project, words: list[Word], audio_duration: float) -> dict:
             return round(al.start(p), 3)
 
         span0, span1 = first[i], max(first[i] + 0.5, last[i] - 0.3)
+        if "steps" in r:                                       # diagram steps: on their words, else spread evenly
+            steps = [dict(s) for s in r["steps"]]
+            for k, s in enumerate(steps):
+                s["t"] = resolve(s.pop("at", None), f"steps[{k}]", round(span0 + (span1 - span0) * k / max(1, len(steps)), 3))
+            r["steps"] = steps
         for key in ("items",):
             if key in r:
                 its = _items(r[key])
@@ -194,9 +199,27 @@ def build(proj: Project, words: list[Word], audio_duration: float) -> dict:
         else:
             r["caption_words"] = r["words"]
         out_scenes.append(r)
+    _link_continued(out_scenes, problems)
     if problems:
         raise ValidationError("storyboard cues", problems)
     w, h = proj.size
     return {"fps": fps, "width": w, "height": h, "duration": round(frames_at[-1] / fps, 4),
             "frames": frames_at[-1], "audio_duration": round(audio_duration, 3),
             "scenes": out_scenes, "warnings": warnings}
+
+
+def _link_continued(scenes: list, problems: list) -> None:
+    """A diagram scene with `"continue": true` carries on from the diagram before it: shared nodes, connectors and
+    groups stay where they are (moving if their position changed), the cut between the two scenes is invisible
+    (no exit fade, no entrance transition, a still camera) and an unchanged heading stays put."""
+    for i, sc in enumerate(scenes):
+        if not sc.get("continue"):
+            continue
+        prev = scenes[i - 1] if i else None
+        if sc.get("type") != "diagram" or not prev or prev.get("type") != "diagram":
+            problems.append(f"scene {sc['id']}: \"continue\" needs a diagram scene right after another diagram scene")
+            continue
+        prev["hold_exit"] = True
+        prev["camera"] = sc["camera"] = "still"
+        sc["transition"] = "none"
+        sc["prev"] = {k: v for k, v in prev.items() if k not in ("words", "caption_words", "sfx", "mascot")}

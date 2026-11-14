@@ -315,6 +315,10 @@ def _events(tl: dict) -> list[dict]:
         if sc["type"] in ("bullets", "flow"):
             for k, it in enumerate(sc.get("items", [])):
                 ev.append({"t": it["t"], "role": "reveal", "scene": sc["id"], "why": f"item {k + 1} appears"})
+        elif sc["type"] == "diagram":
+            for k, step in enumerate(sc.get("steps", [])):
+                if step.get("show"):
+                    ev.append({"t": step["t"], "role": "reveal", "scene": sc["id"], "why": f"diagram step {k + 1}"})
         elif sc["type"] == "number":
             ev.append({"t": sc["t"] + 0.9, "role": "number", "scene": sc["id"], "why": "count-up lands"})
         elif sc["type"] == "statement" and sc.get("emphasis_t"):

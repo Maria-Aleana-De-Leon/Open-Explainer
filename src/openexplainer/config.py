@@ -17,7 +17,7 @@ from .errors import OexError, ValidationError
 from .schema import B, CUE, HEX, N, S, check
 
 FORMATS = {"16:9": (1920, 1080), "9:16": (1080, 1920)}
-SCENE_TYPES = ["title", "bullets", "statement", "flow", "number", "compare", "image", "end"]
+SCENE_TYPES = ["title", "bullets", "statement", "flow", "number", "compare", "image", "diagram", "end"]
 TRANSITIONS = ["fade", "slide", "wipe", "zoom", "none"]
 POSITIONS = ["left", "right", "bottom-left", "bottom-right"]
 
@@ -26,6 +26,26 @@ MASCOT_ACTION = {"type": "object", "required": ["at"], "fields": {
 SFX_CUE = {"type": "object", "required": ["at"], "fields": {
     "at": CUE, "sound": S, "tag": S, "gain_db": N}}
 ITEM = {"type": ["object", "string"], "required": ["text"], "fields": {"text": S, "at": CUE}}
+IDS = {"type": "array", "items": S}
+UNIT = {"type": "number", "min": 0, "max": 1}
+EASES = ["linear", "in_out_sine", "out_sine", "out_cubic", "in_out_cubic", "out_quint", "in_out_quint", "out_expo",
+         "out_back", "spring"]
+NODE = {"type": "object", "required": ["id", "label"], "fields": {
+    "id": S, "label": S, "x": UNIT, "y": UNIT, "sub": S,
+    "shape": {"type": "string", "enum": ["box", "pill", "circle", "diamond"]}}}
+EDGE = {"type": "object", "required": ["from", "to"], "fields": {
+    "id": S, "from": S, "to": S, "label": S, "route": {"type": "string", "enum": ["straight", "curve", "elbow"]}}}
+GROUP = {"type": "object", "required": ["id", "nodes"], "fields": {"id": S, "label": S, "nodes": IDS}}
+FLOW = {"type": "object", "fields": {"edge": S, "path": IDS, "label": S, "back": S, "reverse": {"type": "boolean"},
+                                     "dur": {"type": "number", "min": 0.3, "max": 6}}}
+MOVE = {"type": "object", "required": ["x", "y"], "fields": {"x": UNIT, "y": UNIT,
+                                                            "ease": {"type": "string", "enum": EASES}}}
+STEP = {"type": "object", "required": ["at"], "fields": {
+    "at": CUE, "show": IDS, "hide": IDS, "draw": IDS, "activate": IDS, "deactivate": IDS, "done": IDS, "error": IDS,
+    "dim": IDS, "undim": IDS, "focus": IDS, "unfocus": {"type": "boolean"},
+    "label": {"type": "object", "values": S}, "move": {"type": "object", "values": MOVE},
+    "flow": {"type": ["object", "array"], "fields": FLOW["fields"], "items": FLOW},
+    "ease": {"type": "string", "enum": EASES}, "stagger": {"type": "number", "min": 0, "max": 2}}}
 
 SCENE = {"type": "object", "required": ["id", "type", "say"], "fields": {
     "id": {"type": "string", "pattern": r"[a-z][a-z0-9_-]{0,31}"},
@@ -34,12 +54,15 @@ SCENE = {"type": "object", "required": ["id", "type", "say"], "fields": {
     "title": S, "subtitle": S, "heading": S, "text": S, "label": S, "value": S, "cta": S,
     "emphasis": S, "image": S,
     "items": {"type": "array", "items": ITEM},
+    "nodes": {"type": "array", "items": NODE}, "edges": {"type": "array", "items": EDGE},
+    "steps": {"type": "array", "items": STEP}, "groups": {"type": "array", "items": GROUP},
+    "center": S, "continue": {"type": "boolean"},
     "left": {"type": "object", "fields": {"title": S, "items": {"type": "array", "items": ITEM}, "at": CUE}},
     "right": {"type": "object", "fields": {"title": S, "items": {"type": "array", "items": ITEM}, "at": CUE}},
     "at": CUE,
     "transition": {"type": "string", "enum": TRANSITIONS},
     "camera": {"type": "string", "enum": ["push", "still"]},
-    "layout": {"type": "string", "enum": ["row", "cycle"]},
+    "layout": {"type": "string", "enum": ["row", "cycle", "column", "hub", "manual"]},
     "mascot": {"type": ["array", "boolean"], "items": MASCOT_ACTION},
     "sfx": {"type": "array", "items": SFX_CUE},
     "notes": S,
@@ -161,7 +184,7 @@ def load_project(root: Path, require_audio: bool = True) -> Project:
 
 REQUIRED_CONTENT = {
     "title": ["title"], "bullets": ["items"], "statement": ["text"], "flow": ["items"],
-    "number": ["value"], "compare": ["left", "right"], "image": ["image"], "end": ["title"],
+    "number": ["value"], "compare": ["left", "right"], "image": ["image"], "diagram": ["nodes"], "end": ["title"],
 }
 
 
@@ -175,4 +198,13 @@ def _scene_content_problems(sb: dict) -> list[str]:
                 out.append(f"scenes[{i}] ({s.get('id')}): a '{s['type']}' scene needs '{f}'")
         if not str(s.get("say", "")).strip():
             out.append(f"scenes[{i}] ({s.get('id')}): 'say' is empty; every scene needs the narration it covers")
+        if s["type"] == "diagram" and s.get("nodes"):
+            from .errors import OexError
+            from .scenes import check_diagram
+            try:
+                check_diagram(s)
+            except OexError as e:
+                out.append(f"{e.message}; {e.fix}")
+            except (KeyError, TypeError, AttributeError):
+                pass                                    # malformed fields: the schema check reports those
     return out

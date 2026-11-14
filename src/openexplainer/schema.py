@@ -2,6 +2,7 @@
 
 Spec mini-language:
     {"type": "object", "fields": {name: spec}, "required": [...], "extra": False}
+    {"type": "object", "values": spec}           a map whose keys are free (ids) and whose values match spec
     {"type": "array", "items": spec, "min": 1}
     {"type": "string", "enum": [...], "pattern": regex}
     {"type": "number", "min": 0, "max": 10}   {"type": "integer"}   {"type": "boolean"}
@@ -43,6 +44,9 @@ def check(value, spec: dict, path: str = "$") -> list[str]:
                 close = [f for f in spec["fields"] if f.lower().startswith(k.lower()[:3])]
                 hint = f" (did you mean '{close[0]}'?)" if close else ""
                 out.append(f"{path}: unknown field '{k}'{hint}; allowed: {', '.join(spec['fields'])}")
+    if isinstance(value, dict) and "values" in spec:
+        for k, v in value.items():
+            out += check(v, spec["values"], f"{path}.{k}")
     if isinstance(value, list):
         if len(value) < spec.get("min", 0):
             out.append(f"{path}: needs at least {spec['min']} item(s)")

@@ -180,10 +180,19 @@ def _cues(sc: dict):
     if sc["type"] in ("title", "statement", "end"):
         if sc.get("emphasis_t"):
             yield "emphasis", sc["emphasis_t"]
+    elif sc["type"] == "diagram":
+        # a diagram's scene cue brings on only the nodes no step shows; nodes carried over from the previous
+        # scene ("continue") are already there, so nothing new appears
+        stepped = {i for s in sc.get("steps", []) for i in s.get("show", [])}
+        carried = {n["id"] for n in (sc.get("prev") or {}).get("nodes", [])}
+        if any(n["id"] not in stepped | carried for n in sc["nodes"]):
+            yield "scene", sc["t"]
     else:
         yield "scene", sc["t"]
     for k, it in enumerate(sc.get("items", [])):
         yield f"items[{k}]", it["t"]
+    for k, step in enumerate(sc.get("steps", [])):
+        yield f"steps[{k}]", step["t"]
     for side in ("left", "right"):
         if side in sc:
             yield side, sc[side]["t"]

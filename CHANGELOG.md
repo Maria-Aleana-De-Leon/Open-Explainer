@@ -5,6 +5,21 @@ All notable changes to this project are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+- Animated `diagram` scenes: nodes (box, pill, circle, diamond) placed by hand or by a `row`, `column`, `cycle` or
+  `hub` layout, labelled groups, and straight, curved or right-angled connectors with labels. Steps cued on the
+  narration's words show and hide parts, draw connectors, send tokens along one connector or a chain (with an answer
+  coming back), switch states (active, done, error), dim or focus parts, relabel nodes (the node resizes smoothly to
+  its new label) and move them with one of ten easing curves. `"continue": true` carries a diagram on into the next
+  scene without a visible cut. Every style gains `good` and `bad` colours for done and error states.
+- Diagram rendering is fast and deterministic: frames are drawn at 2x and box-filtered (sharp text and thin lines
+  without halos), and a diagram that is not changing is drawn once and reused. About 6-12 ms per 1080p frame on
+  an Apple Silicon laptop; output is identical in any frame order, on any number of workers and with or without
+  the cache.
+- `oex validate` checks animated diagrams: unknown ids (it lists the valid ones), an id of the wrong kind,
+  duplicate ids, broken token paths, nodes without a position in a manual layout.
+- QA checks that every diagram step lands on its word; automatic sound effects can mark diagram reveals.
+
 ### Fixed
 - Text no longer shakes when the camera push is on. The push resized each frame to a truncated whole-pixel size and
   cropped at a truncated offset, so text jumped back and forth by about a pixel; the camera push, zoom and slide now

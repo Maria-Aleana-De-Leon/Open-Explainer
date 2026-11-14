@@ -527,9 +527,86 @@ def build_image(sc, st, R, root: Path):
     return b
 
 
+def _diagram_ids(sc) -> tuple[set, set, set]:
+    nodes = {n["id"] for n in sc["nodes"]}
+    edges = {e.get("id") or f"{e['from']}-{e['to']}" for e in sc.get("edges", [])}
+    return nodes, edges, {g["id"] for g in sc.get("groups", [])}
+
+
+def check_diagram(sc) -> None:
+    """Every id a diagram refers to exists, and has the right kind (clear errors instead of a crash mid-render)."""
+    nodes, edges, groups = _diagram_ids(sc)
+    known = f"nodes: {', '.join(sorted(nodes))}; edges: {', '.join(sorted(edges)) or '-'}" + \
+            (f"; groups: {', '.join(sorted(groups))}" if groups else "")
+
+    def fail(where, msg):
+        raise OexError(f"scene {sc['id']} {where}: {msg}", known)
+
+    seen = [n["id"] for n in sc["nodes"]]
+    if len(seen) != len(set(seen)):
+        fail("nodes", f"duplicate id(s) {sorted({i for i in seen if seen.count(i) > 1})}")
+    if (nodes & edges) or (nodes & groups) or (edges & groups):
+        fail("ids", f"used twice: {sorted((nodes & edges) | (nodes & groups) | (edges & groups))}")
+    for e in sc.get("edges", []):
+        for end in (e["from"], e["to"]):
+            if end not in nodes:
+                fail(f"edge {e.get('id') or e['from'] + '-' + e['to']}", f"unknown node '{end}'")
+    for g in sc.get("groups", []):
+        if not g["nodes"] or set(g["nodes"]) - nodes:
+            fail(f"group {g['id']}", f"needs existing nodes, got {g['nodes']}")
+    if sc.get("center") and sc["center"] not in nodes:
+        fail("center", f"unknown node '{sc['center']}'")
+    every = nodes | edges | groups
+    kinds = {"show": every, "hide": every, "dim": every, "undim": every, "focus": every, "draw": edges,
+             "activate": nodes | edges, "deactivate": nodes | edges, "done": nodes | edges, "error": nodes | edges}
+    edge_ends = {(e.get("id") or f"{e['from']}-{e['to']}"): (e["from"], e["to"]) for e in sc.get("edges", [])}
+    for k, step in enumerate(sc.get("steps", [])):
+        where = f"steps[{k}]"
+        bad = [i for key, ok in kinds.items() for i in step.get(key, []) if i not in ok]
+        bad += [i for key in ("label", "move") for i in (step.get(key) or {}) if i not in nodes]
+        if bad:
+            fail(where, f"unknown id(s) {bad}")
+        flows = [step["flow"]] if isinstance(step.get("flow"), dict) else step.get("flow", [])
+        for f in flows:
+            chain = f.get("path") or ([f["edge"]] if f.get("edge") else [])
+            if not chain:
+                fail(where, "a flow needs an \"edge\" or a \"path\" of connector ids")
+            if [c for c in chain if c not in edges]:
+                fail(where, f"flow over unknown connector(s) {[c for c in chain if c not in edges]}")
+            for c0, c1 in zip(chain, chain[1:]):
+                if edge_ends[c0][1] != edge_ends[c1][0]:
+                    fail(where, f"flow path breaks between {c0} and {c1}: {c0} ends at {edge_ends[c0][1]}, "
+                                f"{c1} starts at {edge_ends[c1][0]}")
+    if sc.get("layout", "manual") == "manual":
+        loose = [n["id"] for n in sc["nodes"] if "x" not in n or "y" not in n]
+        if loose:
+            raise OexError(f"scene {sc['id']}: node(s) {loose} have no x, y",
+                           "give every node x and y (0..1), or set \"layout\": row, column, cycle or hub")
+
+
+def _diagram_area(sc, st, R, b) -> tuple:
+    y0 = _heading(sc, st, R, b, R.stage[1])
+    return (R.stage[0], y0, R.stage[2], R.stage[3])
+
+
+def build_diagram(sc, st, R, root: Path):
+    """Nodes, groups, connectors and tokens animated by the scene's steps (see motion.py)."""
+    from .motion import Diagram
+    check_diagram(sc)
+    b = Built()
+    area = _diagram_area(sc, st, R, b)
+    prev = sc.get("prev")
+    prev_area = _diagram_area(prev, st, R, Built()) if prev else None
+    if prev and sc.get("heading") and prev.get("heading") == sc["heading"] and b.els:
+        b.els[-1].anim, b.els[-1].t = "none", sc["start"] - 1     # the same heading stays: no second entrance
+    dia = Diagram(sc, st, area, prev_area)
+    b.els.append(El(None, 0, 0, sc["start"] - 1, draw=dia.draw, dur=0.01))   # the diagram times itself
+    return b
+
+
 BUILDERS = {
     "title": build_title, "bullets": build_bullets, "statement": build_statement, "number": build_number,
-    "flow": build_flow, "compare": build_compare, "end": build_end, "image": build_image,
+    "flow": build_flow, "compare": build_compare, "end": build_end, "image": build_image, "diagram": build_diagram,
 }
 
 

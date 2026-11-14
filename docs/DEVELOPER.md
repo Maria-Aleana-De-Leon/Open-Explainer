@@ -9,6 +9,8 @@ src/openexplainer/
   words.py                             word-timing formats, number/fragment normalisation, onset refinement, faster-whisper
   timeline.py                          script <-> transcript alignment, frame-exact scene cuts, cue resolution
   scenes.py, text.py, styles.py        scene templates (pure functions of time), text layout, styles as data
+  motion.py                            animated `diagram` scenes: nodes, connectors, tokens, steps, layouts, easing;
+                                       state(t) is pure, layers are cached by state
   captions.py                          chunking, SRT/VTT, burned-in captions
   mascot.py, mascot_io.py              mascot preparation (registration, changed regions, patches, review) - spec S3
   mouthtrack.py                        mouth-shape track from audio (features + DP smoothing) - spec S1
@@ -72,8 +74,10 @@ New core components start from a written spec in `docs/specs/COMPONENTS.md`; do 
 
 - **Scene type**: add `build_<type>(sc, st, R, root) -> Built` in `scenes.py`, register in `BUILDERS`, add the
   type + required fields in `config.py` (`SCENE_TYPES`, `REQUIRED_CONTENT`, fields in `SCENE`), list its cue times
-  in `qa._cues` and `sfx._events`, document it in the storyboard reference, add a render test.
-- **Style**: add a dict to `styles.STYLES` (colours, radius, decor, default transition/camera).
+  in `qa._cues` and `sfx._events`, document it in the storyboard reference, add a render test. A new module that
+  draws pixels goes in `render.PIXEL_MODULES` (cached scenes are keyed by those files; a test checks it).
+- **Style**: add a dict to `styles.STYLES` (colours including `good`/`bad` for diagram states, radius, decor,
+  default transition/camera).
 - **Font / non-Latin scripts**: `styles.FONTS` maps weights to files; bundle only OFL/permissive fonts with their
   licence file.
 - **TTS provider**: add a function in `tts.py` and a branch in `tts.synthesize` (it writes to a temporary file and

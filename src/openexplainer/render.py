@@ -26,7 +26,7 @@ from .styles import get as get_style
 from .styles import rgb
 
 PIXEL_MODULES = ("render.py", "scenes.py", "text.py", "styles.py", "captions.py", "mascot.py", "mascot_io.py",
-                 "presenter.py", "mouthtrack.py")
+                 "presenter.py", "mouthtrack.py", "motion.py")
 
 
 def _code_hash() -> str:
@@ -80,7 +80,7 @@ class SceneFrames:
         layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         for el in self.els:
             el.render(layer, t)
-        k = 1.0 if self.last else clamp((dur - local) / EXIT)
+        k = 1.0 if self.last or sc.get("hold_exit") else clamp((dur - local) / EXIT)
         ein = ease_out_cubic(clamp(local / 0.42))
         scale, dx = 1.0, 0.0
         if self.camera == "push":
