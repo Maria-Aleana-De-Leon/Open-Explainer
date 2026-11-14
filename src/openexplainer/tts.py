@@ -7,6 +7,9 @@ Providers:
     command     any local engine (e.g. Piper): a command template with {text_file} and {out} placeholders.
 
 All providers read the storyboard's "say" text, join scenes with a pause, and write the project's narration file.
+`synthesize` runs a provider into a temporary file and only replaces the narration after `check_speech` has
+confirmed real, audible audio of a plausible length. A failure is reported as an error; there is no silent fallback
+to another provider.
 """
 from __future__ import annotations
 
@@ -21,7 +24,66 @@ import urllib.request
 from pathlib import Path
 
 from .errors import OexError
-from .media import ffmpeg
+from .media import decode_mono, duration, ffmpeg
+
+MIN_SPEECH_S = 0.5          # shorter than this is not narration
+SILENCE_DBFS = -60.0        # peak below this is silence
+MAX_WORDS_PER_S = 8.0       # faster than ~480 words/min means the audio stops early (truncated or partly failed)
+
+FIXES = {
+    "say": "macOS `say` exits without error when it cannot reach the speech service, which happens inside some "
+           "sandboxes (for example an AI agent's sandboxed shell). Run `oex tts --provider say` in a normal "
+           "Terminal, or let the agent run it outside its sandbox; or record the narration yourself",
+    "command": "run your TTS command by hand on a short text and check that it writes audio to {out}",
+    "elevenlabs": "check your ElevenLabs voice id and character quota, then run `oex tts` again",
+}
+
+
+def check_speech(path: Path, provider: str, words: int) -> float:
+    """Raise OexError unless `path` holds real, audible audio of a plausible length for `words` words.
+
+    Returns the duration in seconds."""
+    fix = FIXES.get(provider, "record the narration yourself")
+    if not path.exists() or path.stat().st_size == 0:
+        raise OexError(f"{provider} produced no audio file", fix)
+    try:
+        d = duration(path)
+    except OexError:
+        raise OexError(f"{provider} produced a file with no playable audio ({path.name})", fix) from None
+    if d < MIN_SPEECH_S:
+        raise OexError(f"{provider} produced only {d:.2f}s of audio for a {words}-word script", fix)
+    x = decode_mono(path, 16000)
+    peak = float(abs(x).max()) if len(x) else 0.0
+    if peak <= 10 ** (SILENCE_DBFS / 20):
+        raise OexError(f"{provider} produced {d:.1f}s of silence, not speech", fix)
+    if words >= 10 and d < words / MAX_WORDS_PER_S:
+        raise OexError(f"{provider} produced only {d:.1f}s of audio for a {words}-word script "
+                       f"(at least {words / MAX_WORDS_PER_S:.0f}s expected); the speech stopped early", fix)
+    return d
+
+
+def synthesize(proj, out: Path, provider: str, voice: str | None = None, rate: int | None = None,
+               template: str | None = None, words_out: Path | None = None) -> float:
+    """Make narration with `provider` and write it to `out` only if it is real speech. Returns its duration."""
+    text, _ = script_text(proj)
+    words = len(text.split())
+    out.parent.mkdir(parents=True, exist_ok=True)
+    tmp = out.with_name(f"{out.stem}.tts-new{out.suffix}")
+    tmp.unlink(missing_ok=True)
+    try:
+        if provider == "say":
+            say(proj, tmp, voice, rate)
+        elif provider == "elevenlabs":
+            elevenlabs(proj, tmp, voice, words_out=words_out)
+        elif provider == "command":
+            command(proj, tmp, template or "")
+        else:
+            raise OexError(f"unknown TTS provider {provider!r}", "use --provider say, elevenlabs or command")
+        d = check_speech(tmp, provider, words)
+        os.replace(tmp, out)
+        return d
+    finally:
+        tmp.unlink(missing_ok=True)
 
 
 def script_text(proj, pause_ms: int = 600) -> tuple[str, list[str]]:
@@ -37,8 +99,16 @@ def say(proj, out: Path, voice: str | None, rate: int | None, pause_ms: int = 60
     with tempfile.TemporaryDirectory() as td:
         aiff = Path(td) / "n.aiff"
         cmd = ["say", "-o", str(aiff)] + (["-v", voice] if voice else []) + (["-r", str(rate)] if rate else [])
-        subprocess.run(cmd + [text], check=True)
-        ffmpeg("-i", str(aiff), "-ar", "48000", "-ac", "1", str(out))
+        r = subprocess.run(cmd + [text], capture_output=True, text=True)
+        if r.returncode:
+            raise OexError(f"`say` failed (exit {r.returncode}): {r.stderr.strip()[-300:]}",
+                           "check the voice name with `say -v '?'`")
+        # `say` can exit 0 and leave an empty or header-only file; check_speech catches that after conversion
+        if aiff.exists() and aiff.stat().st_size > 0:
+            try:
+                ffmpeg("-i", str(aiff), "-ar", "48000", "-ac", "1", str(out))
+            except OexError:
+                pass
 
 
 def elevenlabs(proj, out: Path, voice: str | None, model: str = "eleven_multilingual_v2",
@@ -84,5 +154,9 @@ def command(proj, out: Path, template: str) -> None:
         cmd = template.format(text_file=shlex.quote(str(tf)), out=shlex.quote(str(raw)))
         r = subprocess.run(cmd, shell=True, capture_output=True, text=True)
         if r.returncode or not raw.exists():
-            raise OexError(f"TTS command failed ({r.returncode}): {r.stderr[-300:]}")
-        ffmpeg("-i", str(raw), "-ar", "48000", str(out))
+            raise OexError(f"TTS command failed ({r.returncode}): {r.stderr[-300:]}", FIXES["command"])
+        if raw.stat().st_size > 0:
+            try:
+                ffmpeg("-i", str(raw), "-ar", "48000", str(out))
+            except OexError:
+                pass                # unreadable output: check_speech reports it with the provider's fix

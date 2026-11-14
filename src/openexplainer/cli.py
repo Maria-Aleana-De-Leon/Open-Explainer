@@ -114,16 +114,12 @@ def cmd_tts(a) -> int:
     out = p.path(p.cfg["narration"]["audio"])
     if out.exists() and not a.overwrite:
         raise OexError(f"{out} already exists", "pass --overwrite to replace the narration with synthetic speech")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    if a.provider == "say":
-        tts.say(p, out, a.voice, a.rate)
-    elif a.provider == "elevenlabs":
-        tmp = p.build / "elevenlabs-alignment.json"
-        tts.elevenlabs(p, out, a.voice, words_out=tmp)
-        import_words(_proj(a), tmp)
-    else:
-        tts.command(p, out, a.command or "")
-    print(f"narration -> {out}" + ("" if a.provider == "elevenlabs" else "\nnext: oex transcribe"))
+    alignment = p.build / "elevenlabs-alignment.json" if a.provider == "elevenlabs" else None
+    d = tts.synthesize(p, out, a.provider, voice=a.voice, rate=a.rate, template=a.command, words_out=alignment)
+    if alignment is not None:
+        import_words(_proj(a), alignment)
+    print(f"narration -> {out} ({d:.1f}s, checked: real audio)"
+          + ("" if a.provider == "elevenlabs" else "\nnext: oex transcribe"))
     return 0
 
 

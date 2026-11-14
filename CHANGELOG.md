@@ -5,6 +5,13 @@ All notable changes to this project are listed here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+- `oex tts` no longer reports success when the engine produced no audio: every provider writes to a temporary file
+  that must contain real, audible speech of a plausible length before it replaces the narration. A failure is an
+  error with a fix, the previous narration is kept, and no other provider is tried. (macOS `say` inside a sandbox
+  could exit successfully and leave an empty file.)
+
+
 ## [0.1.0]
 
 First public beta. Tested on macOS only; Linux and Windows are unverified; GitHub Actions CI has not passed yet.

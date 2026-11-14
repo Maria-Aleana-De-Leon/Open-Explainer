@@ -22,7 +22,7 @@ src/openexplainer/
   qa.py                                checks on the rendered file, contact sheets
   pipeline.py                          plan -> presenter -> mix -> render -> captions/stems -> QA -> credits -> VERIFY.md;
                                        preflight
-  tts.py                               optional TTS providers
+  tts.py                               optional TTS providers; `synthesize` + `check_speech` (no silent failures)
 skills/                                Agent Skills, canonical (SKILL.md + references + agents/openai.yaml)
 .claude/skills/, .agents/skills/      generated mirrors for Claude Code and Codex (`tools/skills.py sync`)
 AGENTS.md, CLAUDE.md, skills.lock.json generated from docs/agent-guide.md and skills/
@@ -76,7 +76,8 @@ New core components start from a written spec in `docs/specs/COMPONENTS.md`; do 
 - **Style**: add a dict to `styles.STYLES` (colours, radius, decor, default transition/camera).
 - **Font / non-Latin scripts**: `styles.FONTS` maps weights to files; bundle only OFL/permissive fonts with their
   licence file.
-- **TTS provider**: add a function in `tts.py` and a choice in `cli.cmd_tts`; keys come from environment only.
+- **TTS provider**: add a function in `tts.py` and a branch in `tts.synthesize` (it writes to a temporary file and
+  `check_speech` validates it before the narration is replaced); keys come from environment only.
 - **Render backend** (e.g. HTML/CSS): implement `render_scene(scene, job) -> status dict` with the same caching
   contract; see ADR 0002.
 
