@@ -11,6 +11,8 @@ the result.
 
 - **Your voice is the clock.** Every scene cut, entrance, highlight and mascot gesture lands on a word of your
   recording. Storyboards name *phrases*, not timestamps; the toolkit aligns them to the audio.
+- **Animated diagrams that explain.** Parts appear as they are named, connectors draw, requests and results travel
+  between them and states change on the narration's words; text stays perfectly steady.
 - **Your own mascot.** Copy-ready prompts turn a photo of you into a cartoon in ChatGPT; the importer checks,
   aligns and prepares the images (mouth shapes, blinks, poses) and shows a review sheet before anything renders.
 - **Deterministic and checkable.** Scenes are data (`storyboard.json`), rendered by code, cached per scene, and
@@ -23,6 +25,18 @@ the result.
   by the sound of the voice, not by language; captions use your script's spelling.
 
 16:9 and 9:16 · 1080p H.264/AAC · SRT/VTT · stems · 30 s to 5+ min · runs on a laptop CPU, no GPU or browser.
+
+## See it in action
+
+![A still from How AI Agents Work: the agent loop, with a $900 flight rejected and a $250 flight accepted](docs/showcase/poster.png)
+
+**How AI Agents Work** is a one-minute, 1080p explainer made with Open Explainer v0.3.0. Claude Code, using the
+toolkit's skills, built the storyboard from a short brief: animated diagrams whose parts appear, connect, pass
+results and change state on the narration's words (the agent loop, a worked flight-booking example with a retry,
+why checking matters, and asking before risky actions), with captions, music and sound effects, followed by the
+toolkit's quality checks. Four scenes were then refined in review by editing the storyboard only, with no custom
+code. The narration is the maintainer's voice, generated from the approved script with an ElevenLabs voice clone
+and imported with `oex use-narration`. To make your own, follow the [Quick start](#quick-start).
 
 ## Quick start
 
@@ -94,6 +108,8 @@ Version 0.2.0, **public beta**. Known limitations:
   image generators may need the repair prompt (`oex prompts 6`).
 - Agent use is exercised end to end with Claude Code; Codex finds and reads the skills, but a complete Codex run
   has not been verified yet.
+- Animated diagrams are built from boxes, pills, circles, diamonds, connectors and labels; other pictures
+  (`image` scenes) appear whole, without step-by-step animation.
 - No HTML/CSS render backend and no bundled icon library yet.
 
 ## Credits and licence

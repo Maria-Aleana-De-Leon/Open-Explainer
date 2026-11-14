@@ -46,6 +46,7 @@ All notable changes to this project are listed here. The format follows
 - macOS `say` narration is for private drafts and tests only: Apple's macOS licence allows its system voices for
   personal, non-commercial use and not for publishing or public sharing. The README, install and user guides, the
   voice-sync and explainer-director skills and the TTS docstrings now say so.
+- README: a showcase section with a still from the 60-second "How AI Agents Work" explainer.
 
 ## [0.2.0] - 2026-11-14
 
