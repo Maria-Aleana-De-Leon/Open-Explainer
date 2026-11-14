@@ -1,6 +1,6 @@
 # open-explainer
 
-> **Public beta (v0.2.0).** Tested on macOS only; Linux and Windows are unverified. A GitHub Actions CI workflow is
+> **Public beta (v0.3.0).** Tested on macOS only; Linux and Windows are unverified. A GitHub Actions CI workflow is
 > included but has **not passed yet**: so far the test suite has been run locally on macOS. Please
 > [report problems](https://github.com/Maria-Aleana-De-Leon/Open-Explainer/issues).
 
@@ -94,7 +94,7 @@ macOS is included but has not passed yet. Reports are welcome.
 
 ## Status and known limitations
 
-Version 0.2.0, **public beta**. Known limitations:
+Version 0.3.0, **public beta**. Known limitations:
 
 - GitHub Actions CI has not passed yet; the test suite has only been run locally on macOS.
 - Tested on macOS only; Linux and Windows are unverified. 30 fps is tested, 60 fps is not.

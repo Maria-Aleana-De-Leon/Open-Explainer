@@ -5,6 +5,12 @@ All notable changes to this project are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-14
+
+Third public beta: animated diagrams that move on the narration's words, steady text, and agent skills that plan
+motion. Existing projects render as before (see "Changed" for the one visible difference). Tested on macOS only;
+Linux and Windows are unverified; GitHub Actions CI has not passed yet.
+
 ### Added
 - Animated `diagram` scenes: nodes (box, pill, circle, diamond) placed by hand or by a `row`, `column`, `cycle` or
   `hub` layout, labelled groups, and straight, curved or right-angled connectors with labels. Steps cued on the

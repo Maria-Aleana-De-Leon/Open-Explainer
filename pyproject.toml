@@ -1,6 +1,6 @@
 [project]
 name = "openexplainer"
-version = "0.2.0"
+version = "0.3.0"
 description = "Open-source toolkit for narrated AI explainer videos: storyboards, user-made mascots, lip sync, sound design and FFmpeg rendering, driven by AI coding agents."
 readme = "README.md"
 license = "MIT"
