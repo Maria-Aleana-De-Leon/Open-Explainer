@@ -22,7 +22,7 @@ words. Word timings live in `build/words.json`.
 | Option | Needs | Notes |
 |---|---|---|
 | The user's own recording | a phone or microphone | best result; any MP3/WAV/M4A |
-| `oex tts --provider say [--voice Samantha] [--rate 165]` | macOS (built in, free) | drafts and tests; robotic but clear. List voices: `say -v '?'` |
+| `oex tts --provider say [--voice Samantha] [--rate 165]` | macOS (built in, free) | **private drafts and tests only**: Apple's macOS licence allows its system voices only for personal, non-commercial use and not for publishing or public sharing. Robotic but clear. List voices: `say -v '?'` |
 | `oex tts --provider command --command "<engine> ... {text_file} ... {out}"` | a local TTS engine **the user has installed and chosen** (e.g. Piper, espeak-ng) | runs entirely on their machine |
 | `oex tts --provider elevenlabs --voice <id>` | the user's ElevenLabs account; `ELEVENLABS_API_KEY` in the environment | paid, online: ask first; the key is never written to disk |
 
@@ -34,6 +34,9 @@ If it reports an error, nothing was overwritten:
   or to allow it to run outside the sandbox, or to record the narration.
 - Any other provider failing: report the error and offer the other documented options. Never switch provider
   without asking.
+
+Before a film is published, its narration must be the user's own recording or a voice whose licence allows
+publishing: tell the user if the current take is a `say` draft.
 
 Never search the computer for other voices, TTS models or audio from other projects, and never reuse files from
 outside the user's project and this toolkit. If no documented option works, ask the user to record.

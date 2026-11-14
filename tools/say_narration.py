@@ -1,6 +1,7 @@
 """Generate a TEST narration from a storyboard with macOS `say` (local, offline).
 
-Only for testing the pipeline. The output is not committed or distributed. Real films use the creator's own
+Only for testing the pipeline. The output is not committed or distributed (Apple's macOS licence allows its system
+voices for personal, non-commercial use only, not for publishing or public sharing). Real films use the creator's own
 recording or their own TTS account.
 
 usage: python tools/say_narration.py <project_dir> [--voice Samantha] [--rate 175] [--pause 450]

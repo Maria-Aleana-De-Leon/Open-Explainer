@@ -11,7 +11,9 @@
 No GPU, browser, Node.js or paid service is required.
 
 Optional: `faster-whisper` (the `[transcribe]` extra) for automatic word timings; ElevenLabs text-to-speech with
-your own account (`ELEVENLABS_API_KEY` in the environment); macOS `say` for draft narration.
+your own account (`ELEVENLABS_API_KEY` in the environment); macOS `say` for private draft narration only (Apple's
+macOS licence allows its system voices only for personal, non-commercial use and not for publishing or public
+sharing).
 
 **Platforms:** developed and tested on macOS (Apple Silicon). Linux and Windows are expected to work (Python +
 FFmpeg) but are not yet tested; please report problems.

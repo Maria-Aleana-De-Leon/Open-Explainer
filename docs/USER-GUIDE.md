@@ -31,10 +31,11 @@ more script, not slower speech. Record
 it in one take (quiet room, phone 20 cm away is fine) and save as `audio/narration.wav` (MP3/M4A also fine:
 set `narration.audio`). Pauses between paragraphs help: scenes are cut inside them.
 
-No microphone? `oex tts --provider say` (macOS draft voice, free), `--provider command --command "..."` for a
-local engine you have installed (for example Piper), or `--provider elevenlabs --voice <id>` (your paid account;
-`ELEVENLABS_API_KEY` in the environment). `oex tts` checks the result and only replaces your narration if it got
-real, audible speech; otherwise it says why and keeps the old file.
+No microphone? `oex tts --provider say` (macOS draft voice, free, for private drafts only: Apple's macOS licence
+allows its system voices only for personal, non-commercial use and not for publishing or public sharing),
+`--provider command --command "..."` for a local engine you have installed (for example Piper), or `--provider
+elevenlabs --voice <id>` (your paid account; `ELEVENLABS_API_KEY` in the environment). `oex tts` checks the result
+and only replaces your narration if it got real, audible speech; otherwise it says why and keeps the old file.
 Already have an ElevenLabs take with its timestamps JSON? Use `oex words import file.json` instead of transcribing.
 
 ### 3. Storyboard

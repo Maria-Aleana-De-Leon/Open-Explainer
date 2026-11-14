@@ -5,6 +5,11 @@ All notable changes to this project are listed here. The format follows
 
 ## [Unreleased]
 
+### Documentation
+- macOS `say` narration is for private drafts and tests only: Apple's macOS licence allows its system voices for
+  personal, non-commercial use and not for publishing or public sharing. The README, install and user guides, the
+  voice-sync and explainer-director skills and the TTS docstrings now say so.
+
 ## [0.2.0] - 2026-11-14
 
 Second public beta: illustrated explainers, more reliable narration and audio, and a cleaner emphasis highlight.

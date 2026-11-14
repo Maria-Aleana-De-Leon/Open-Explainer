@@ -72,7 +72,7 @@ say *"make an explainer video about how GPS works"*. See [docs/INSTALL.md](docs/
 | FFmpeg with libx264 | yes | `brew install ffmpeg` · `sudo apt install ffmpeg` · `winget install Gyan.FFmpeg` |
 | `faster-whisper` (`[transcribe]` extra) | optional | automatic word timings; downloads a Whisper model (~0.5 GB) on first use. Without it, import timings with `oex words import` |
 | ElevenLabs text-to-speech | optional | your own account; `ELEVENLABS_API_KEY` in the environment (paid service) |
-| macOS `say` | optional | draft narration and the example voice-overs (macOS only) |
+| macOS `say` | optional | private draft narration and local tests only (macOS only; not for published films, see below) |
 
 **Platforms.** Developed and tested on macOS (Apple Silicon, CPU only). The code is pure Python plus FFmpeg and
 is expected to work on Linux and Windows, but those platforms have not been tested yet. A CI workflow for Ubuntu and
@@ -84,8 +84,11 @@ Version 0.2.0, **public beta**. Known limitations:
 
 - GitHub Actions CI has not passed yet; the test suite has only been run locally on macOS.
 - Tested on macOS only; Linux and Windows are unverified. 30 fps is tested, 60 fps is not.
-- The free draft voice (macOS `say`) sounds robotic, is macOS-only, and cannot run inside some AI agents'
-  sandboxes (for example Codex): record your own narration for anything you publish.
+- The free draft voice (macOS `say`) is for private drafts and tests only. Apple's macOS licence allows its system
+  voices only for personal, non-commercial use and not for publishing or public sharing (see the "Voices" section
+  of the macOS licence for your version). It also sounds robotic, is macOS-only, and cannot run inside some AI
+  agents' sandboxes (for example Codex). Record your own narration, or use a TTS service or model whose licence
+  allows publishing, for anything you share.
 - Lip sync is driven by the sound of the voice: cartoon quality, not phoneme-accurate.
 - Custom mascots are tested with the bundled demo mascot and a procedurally drawn stand-in; mascots made with
   image generators may need the repair prompt (`oex prompts 6`).

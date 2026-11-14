@@ -1,7 +1,8 @@
 """Optional text-to-speech providers. Recorded narration is the primary path; TTS is a convenience.
 
 Providers:
-    say         macOS built-in voices (local, free). Good for drafts and tests.
+    say         macOS built-in voices (local, free). Private drafts and tests only: Apple's macOS licence allows
+                its system voices for personal, non-commercial use and not for publishing or public sharing.
     elevenlabs  ElevenLabs API, with character timestamps (no transcription needed). Key from env
                 ELEVENLABS_API_KEY only - never written to disk or project files.
     command     any local engine (e.g. Piper): a command template with {text_file} and {out} placeholders.

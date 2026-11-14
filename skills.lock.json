@@ -3,7 +3,7 @@
  "skills": {
   "explainer-director": {
    "files": 2,
-   "sha256": "57ac4362724911f5bc60f7defa7e9a70294c95396f6ae9b030f5c1e6d8374620"
+   "sha256": "220584650405112e161c5c283166ff57ba239f4be4c23936e8d630d86182c24c"
   },
   "mascot-prep": {
    "files": 11,
@@ -23,7 +23,7 @@
   },
   "voice-sync": {
    "files": 2,
-   "sha256": "909121028999f2d9e02b3c7c95902b38c45fbf28ba260442361e0fec976745a2"
+   "sha256": "4cf06041201c838860841345b1936297b85bda498e108a0cbed9f86b5ba84bd6"
   }
  }
 }

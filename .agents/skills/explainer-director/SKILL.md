@@ -68,5 +68,7 @@ Talk in outcomes: "your video", "the cartoon of you", "your voice recording" - n
 - Use music or sound effects whose licence the user has not confirmed. Unverified assets are flagged in
   `*.credits.json` (`publish_safe: false`). Tell the user before they publish.
 - Ask for or store the user's photo. Mascots are prepared from their finished PNGs only.
+- Present a film narrated with macOS `say` as ready to publish: its voices are licensed for personal, non-commercial
+  use only. Say so, and offer the user's own recording instead.
 - Search the user's computer for missing tools, voices, models or assets, or use files from their other projects.
 - Leave a real project in a temporary folder.
