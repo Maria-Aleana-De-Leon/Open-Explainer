@@ -264,19 +264,20 @@ def build_statement(sc, st, R, root):
 
 
 def _highlight(b: Built, st: dict, lay, x: float, y: float, t_emph: float, t_el: float) -> None:
-    """A marker that sweeps under the *accent* words of a text sprite at x, y, on the emphasis word."""
-    boxes = [bx for bx in lay.boxes if bx[4]]
+    """A marker that sweeps in under the *accent* text of a text sprite at x, y, on the emphasis word: one
+    continuous bar per line of accented text, below the letters (see text.accent_bars)."""
+    bars = T.accent_bars(lay)
 
     def marker(canvas, t, p):
         e = ease_out_cubic(clamp((t - t_emph) / 0.45))
-        if e <= 0 or not boxes:
+        if e <= 0 or not bars:
             return
         layer = Image.new("RGBA", canvas.size, (0, 0, 0, 0))
         d = ImageDraw.Draw(layer)
-        for x0, y0, x1, y1, _ in boxes:
-            h = y1 - y0
-            d.rounded_rectangle([x + 4 + x0 - 6, y + 4 + y0 + h * 0.74, x + 4 + x0 - 6 + (x1 - x0 + 12) * e,
-                                 y + 4 + y0 + h * 0.97], 8, fill=rgb(st["marker"]) + (170,))   # per-style colour
+        for x0, y0, x1, y1 in bars:
+            r = min(8, (y1 - y0) / 2)
+            d.rounded_rectangle([x + x0, y + y0, x + x0 + max(2 * r, (x1 - x0) * e), y + y1], r,
+                                fill=rgb(st["marker"]) + (170,))   # per-style colour
         canvas.alpha_composite(layer)
     b.els.append(El(None, 0, 0, t_el, draw=marker, dur=0.01, z=-1))
 

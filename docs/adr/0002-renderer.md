@@ -6,8 +6,8 @@ Status: accepted, 2026-11-11
 
 | Option | For | Against |
 |---|---|---|
-| **A. Python (Pillow + numpy) frame compositor → raw frames piped to FFmpeg** | Fully deterministic; unit-testable per frame; no browser or GPU; identical under Claude Code and Codex; scenes from templates and a JSON manifest; per-scene caching is trivial | Less expressive than CSS/SVG/GSAP; we write our own easing, text layout and shapes |
-| B. HyperFrames (HTML+GSAP → headless Chrome) | Rich motion, web fonts and SVG; widely used by agent video kits | 0.x CLI drifting fast (0.8.117 → 0.9.36); ~150 MB Chrome; GPU-sensitive render speed; in practice pulls toward LLM-authored HTML per scene, which is hard to make reproducible |
+| **A. Python (Pillow + numpy) frame compositor → raw frames piped to FFmpeg** | Fully deterministic; unit-testable per frame; no browser or GPU; identical under Claude Code and Codex; scenes from templates and a JSON manifest; per-scene caching is trivial | Less expressive than CSS/SVG and JavaScript animation libraries; we write our own easing, text layout and shapes |
+| B. HTML/CSS animation rendered frame by frame in a headless browser | Rich motion, web fonts and SVG | Depends on fast-moving browser-rendering tooling; a ~150 MB browser download; render speed sensitive to the GPU; in practice pulls toward LLM-authored HTML per scene, which is hard to make reproducible |
 | C. FFmpeg filters + ASS subtitles only | Zero Python dependencies; fast native rendering | Huge filter graphs for many events; awkward diagrams; hard to test |
 
 ## Decision
@@ -16,8 +16,8 @@ Status: accepted, 2026-11-11
 Each scene type is a Python template that draws a frame for time *t*. FFmpeg encodes H.264 1080p MP4 and muxes the
 mastered audio.
 
-The renderer sits behind a small interface (`render_scene(scene, ctx) -> mp4`), so a HyperFrames backend can be
-added later for users who want CSS motion. It would remain optional, never required.
+The renderer sits behind a small interface (`render_scene(scene, ctx) -> mp4`), so an HTML/CSS (browser-based)
+backend can be added later for users who want CSS motion. It would remain optional, never required.
 
 ## Consequences
 

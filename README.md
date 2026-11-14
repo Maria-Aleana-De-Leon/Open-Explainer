@@ -90,8 +90,6 @@ Version 0.1.0, **public beta**. Known limitations:
   image generators may need the repair prompt (`oex prompts 6`).
 - Agent use is exercised with Claude Code; Codex end-to-end runs are not yet verified.
 - No HTML/CSS render backend and no bundled icon library yet.
-- The emphasis highlight under accented words is drawn per word (gaps between words) and can overlap letters with
-  descenders; a fix is planned for the next release.
 
 ## Credits and licence
 

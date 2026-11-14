@@ -10,6 +10,10 @@ All notable changes to this project are listed here. The format follows
   that must contain real, audible speech of a plausible length before it replaces the narration. A failure is an
   error with a fix, the previous narration is kept, and no other provider is tried. (macOS `say` inside a sandbox
   could exit successfully and leave an empty file.)
+- The emphasis highlight under `*accent*` text (`statement` emphasis, titles) is one continuous bar per line of
+  accented text, exactly as wide as the accented letters (not unaccented punctuation such as the "?" in
+  `*fly*?`), drawn just below their lowest ink. It used to be one bar per word, with gaps between words, sitting on
+  top of descenders (g, p, y). Animation and timing are unchanged.
 
 ### Added
 - Diagram guide and Pillow-only diagram kit in the storyboard-builder skill (`references/diagrams.md`,
@@ -24,12 +28,6 @@ All notable changes to this project are listed here. The format follows
   folders or toolchains for missing assets.
 - sound-designer's music example now matches the defaults (`gain_db` -14, `duck_db` 8); the previous example
   (-20 / 10) made music almost inaudible.
-
-### Known issues (priority for the next release)
-- **Emphasis highlight renders incorrectly.** The marker under `*accent*` words (`statement` `emphasis`, titles) is
-  drawn as one bar per word, so multi-word accents show gaps ("more | lift"), and it sits at 74-97% of the word's
-  box height, so it overlaps letters with descenders and looks offset ("fly?"). Cause: `scenes._highlight`. Fix:
-  one continuous bar per line of accent text, placed under the baseline.
 
 ## [0.1.0]
 
