@@ -83,7 +83,7 @@ def cmd_new(a) -> int:
     if d.exists() and any(d.iterdir()):
         raise OexError(f"{d} exists and is not empty", "choose a new folder name")
     (d / "audio").mkdir(parents=True)
-    cfg = {"title": a.title or d.name, "format": a.format, "fps": 30, "style": a.style,
+    cfg = {"title": a.title or d.name, "format": a.format, "fps": 30, "style": a.style, "camera": "still",
            "narration": {"audio": "audio/narration.wav", "language": a.language},
            "mascot": None, "music": None, "sfx": None, "captions": {"burn_in": True}}
     (d / "project.json").write_text(json.dumps(cfg, indent=2) + "\n")

@@ -5,6 +5,19 @@ All notable changes to this project are listed here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+- Text no longer shakes when the camera push is on. The push resized each frame to a truncated whole-pixel size and
+  cropped at a truncated offset, so text jumped back and forth by about a pixel; the camera push, zoom and slide now
+  use one sub-pixel transform (premultiplied alpha), so the push is a smooth, steady drift.
+
+### Changed
+- New projects (`oex new`, including `--demo`) set `"camera": "still"` in `project.json`. Existing projects without a
+  `camera` setting keep their style's camera; a scene's own `camera` still overrides both.
+- Existing projects re-render (the renderer changed, so cached scenes are rebuilt). Frames are unchanged except
+  where the camera push, slide or zoom moves them: those are now positioned with sub-pixel accuracy, so they differ
+  by a fraction of a pixel from v0.2.0.
+- The user guide's example `project.json` now uses the default music levels (`gain_db` -14, `duck_db` 8).
+
 ### Documentation
 - macOS `say` narration is for private drafts and tests only: Apple's macOS licence allows its system voices for
   personal, non-commercial use and not for publishing or public sharing. The README, install and user guides, the

@@ -20,7 +20,7 @@
 | `say` | yes | the exact narration this scene covers, in order (the clock) |
 | `at` | no | when the main element lands: phrase from `say`, or seconds from scene start (default: first word). For `title`, `statement` and `end` the text always appears at the scene start so the stage is never empty: time their beat with `emphasis` instead |
 | `transition` | no | `fade`, `slide`, `wipe`, `zoom`, `none` (default from style) |
-| `camera` | no | `push` (slow push-in) or `still` (default from style) |
+| `camera` | no | `still` or `push` (a slow, steady push-in). Default: the project's `camera` (new projects: `still`), else the style's. Use `push` sparingly: it moves everything on screen, text included |
 | `mascot` | no | list of `{at, pose?, expression?, for?}`; or `false` to hide the mascot in this scene |
 | `sfx` | no | list of `{at, sound? (catalog id), tag? (search words), gain_db?}` |
 | `notes` | no | free text for humans; ignored |

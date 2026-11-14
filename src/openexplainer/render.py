@@ -25,12 +25,15 @@ from .scenes import BUILDERS, EXIT, background, clamp, ease_in_out, ease_out_cub
 from .styles import get as get_style
 from .styles import rgb
 
+PIXEL_MODULES = ("render.py", "scenes.py", "text.py", "styles.py", "captions.py", "mascot.py", "mascot_io.py",
+                 "presenter.py", "mouthtrack.py")
+
+
 def _code_hash() -> str:
     """Hash of every module that affects pixels, plus the fonts: a code change invalidates cached scenes."""
     here = Path(__file__).parent
     h = hashlib.sha256()
-    for name in ("render.py", "scenes.py", "text.py", "styles.py", "captions.py", "mascot.py", "mascot_io.py", "presenter.py",
-                 "mouthtrack.py"):
+    for name in PIXEL_MODULES:
         h.update((here / name).read_bytes())
     for f in sorted((here / "assets" / "fonts").glob("*.ttf")):
         h.update(f.read_bytes())
@@ -61,7 +64,7 @@ class SceneFrames:
         self.els = sorted(self.built.els, key=lambda e: e.z)
         self.last = job["is_last"]
         self.transition = sc.get("transition") or self.st["transition"]
-        self.camera = sc.get("camera") or self.st["camera"]
+        self.camera = sc.get("camera") or job.get("camera") or self.st["camera"]
         self.burner = None
         if job["captions"]:
             cs = chunks([tuple(w) for w in sc["caption_words"]], job["caption_words"])
@@ -89,14 +92,18 @@ class SceneFrames:
             k *= ein
         elif self.transition == "fade":
             k *= ein
-        if abs(scale - 1) > 0.0005:
-            sw, sh = int(W * scale), int(H * scale)
-            big = layer.resize((sw, sh), Image.BILINEAR)
+        if abs(scale - 1) > 0.0005 or abs(dx) > 0.01:
+            # one affine transform with fractional scale and offset (scaled about the stage centre, then shifted by
+            # dx). Resizing to a truncated integer size and cropping at a truncated offset made both jump in
+            # whole-pixel steps at different frames, so text visibly shook back and forth.
             cx, cy = (self.R.stage[0] + self.R.stage[2]) / 2, (self.R.stage[1] + self.R.stage[3]) / 2
-            ox, oy = cx * scale - cx, cy * scale - cy
-            layer = big.crop((int(ox), int(oy), int(ox) + W, int(oy) + H))
+            inv = 1.0 / scale
+            # premultiplied alpha, so filtering never blends transparent black into the edges of letters
+            layer = layer.convert("RGBa").transform(
+                (W, H), Image.AFFINE, (inv, 0.0, cx - (cx + dx) * inv, 0.0, inv, cy - cy * inv),
+                resample=Image.BICUBIC).convert("RGBA")
         canvas = self.bg.copy()
-        canvas.alpha_composite(_layer_opacity(layer, k), (int(dx), 0) if dx >= 0 else (0, 0))
+        canvas.alpha_composite(_layer_opacity(layer, k))
         if self.transition == "wipe" and local < 0.5:
             e = ease_in_out(clamp(local / 0.5))
             x0 = int(W * e)
@@ -168,7 +175,8 @@ def jobs_for(proj, timeline: dict, preview: bool, mascot_for=None) -> list[tuple
     for i, sc in enumerate(scenes):
         fps = 12 if preview else timeline["fps"]
         job = {"width": timeline["width"], "height": timeline["height"], "fps": fps,
-               "style": proj.cfg["style"], "accent": proj.cfg.get("accent"), "mascot_pos": pos,
+               "style": proj.cfg["style"], "accent": proj.cfg.get("accent"), "camera": proj.cfg.get("camera"),
+               "mascot_pos": pos,
                "captions": proj.cfg["captions"]["burn_in"], "caption_words": proj.cfg["captions"]["max_words"],
                "is_last": i == len(scenes) - 1, "root": str(proj.root),
                "preview_scale": 0.5 if preview else 1.0, "preset": "veryfast" if preview else "medium",

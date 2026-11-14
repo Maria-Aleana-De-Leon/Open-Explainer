@@ -108,9 +108,10 @@ print at the end. Neither replaces watching the film.
   "fps": 30,
   "style": "paper",
   "accent": "#E4572E",
+  "camera": "still",
   "narration": {"audio": "audio/narration.wav", "language": "en", "prompt": "GPS, GLONASS", "model": "small"},
   "mascot": {"dir": "../my-mascot", "position": "left", "scale": 1.0},
-  "music": {"file": "audio/bed.mp3", "gain_db": -20, "duck_db": 10, "license": "CC-BY-4.0 Jane Doe", "fade_out": 2},
+  "music": {"file": "audio/bed.mp3", "gain_db": -14, "duck_db": 8, "license": "CC-BY-4.0 Jane Doe", "fade_out": 2},
   "sfx": {"catalog": "~/sfx/catalog.json", "auto": true, "max_per_minute": 6, "min_gap": 3},
   "captions": {"burn_in": true, "max_words": 6, "source": "script"},
   "audio": {"target_lufs": -16, "true_peak": -1.5},
@@ -121,7 +122,9 @@ print at the end. Neither replaces watching the film.
 Only `title` and `narration.audio` are required. Paths are relative to the project folder and may point outside it
 (a shared music folder, a mascot folder): files are used where they are, never copied, so keep them in place - or
 copy them into the project (e.g. `audio/`) to make it self-contained before archiving or sharing it. Styles: `paper` (warm light), `midnight` (dark technical),
-`chalk` (classroom board), `pop` (bright short-form). `mascot`, `music`, `sfx` may be `null`.
+`chalk` (classroom board), `pop` (bright short-form). `mascot`, `music`, `sfx` may be `null`. `camera`: `still`
+(the default for new projects: text stays perfectly steady) or `push` (a slow, steady push-in over each scene); without
+it, the style decides.
 
 ## Sound catalog
 
