@@ -457,6 +457,8 @@ def build_parser() -> argparse.ArgumentParser:
         reg_s(sub)
     except ImportError:
         pass
+    from .cli_assets import register as reg_a
+    reg_a(sub)
     return ap
 
 
