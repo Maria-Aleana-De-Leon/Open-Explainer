@@ -26,7 +26,7 @@ from .styles import get as get_style
 from .styles import rgb
 
 PIXEL_MODULES = ("render.py", "scenes.py", "text.py", "styles.py", "captions.py", "mascot.py", "mascot_io.py",
-                 "presenter.py", "mouthtrack.py", "motion.py")
+                 "presenter.py", "mouthtrack.py", "motion.py", "iso.py")
 
 
 def _code_hash() -> str:
@@ -59,7 +59,7 @@ class SceneFrames:
         self.W, self.H = job["width"], job["height"]
         self.st = get_style(job["style"], job.get("accent"))
         self.R = regions(self.W, self.H, job["mascot_pos"])
-        self.bg = background(self.W, self.H, self.st)
+        self.bg = background(self.W, self.H, self.st, iso=sc.get("look") == "3d")
         self.built = BUILDERS[sc["type"]](sc, self.st, self.R, Path(job["root"]))
         self.els = sorted(self.built.els, key=lambda e: e.z)
         self.last = job["is_last"]

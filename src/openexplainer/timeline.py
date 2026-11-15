@@ -219,6 +219,9 @@ def _link_continued(scenes: list, problems: list) -> None:
         if sc.get("type") != "diagram" or not prev or prev.get("type") != "diagram":
             problems.append(f"scene {sc['id']}: \"continue\" needs a diagram scene right after another diagram scene")
             continue
+        if sc.get("look", "flat") != prev.get("look", "flat"):
+            problems.append(f"scene {sc['id']}: \"continue\" needs the same \"look\" as the scene before it")
+            continue
         prev["hold_exit"] = True
         prev["camera"] = sc["camera"] = "still"
         sc["transition"] = "none"

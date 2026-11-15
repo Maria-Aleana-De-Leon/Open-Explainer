@@ -3,13 +3,15 @@ narration's words.
 
 Storyboard data (full guide: storyboard-builder skill, references/motion.md):
 
-    nodes    {id, label, x?, y?, shape?: box|pill|circle|diamond, sub?}    x, y: 0..1 of the diagram area
+    nodes    {id, label, x?, y?, shape?: box|pill|circle|diamond, sub?, icon?}    x, y: 0..1 of the diagram area
     layout   manual (default) | row | column | cycle | hub (+ center)      positions for nodes without x, y
     groups   {id, label?, nodes: [...]}                                     a labelled frame around related nodes
     edges    {id?, from, to, route?: straight|curve|elbow, label?}
     steps    {at, show, hide, draw, activate, deactivate, done, error, dim, undim, focus, unfocus, label, move, flow,
               ease?, stagger?}
     continue true: carry on from the previous diagram scene (shared ids keep their state and glide to new positions)
+    look     flat (default) | 3d: isometric, flat-shaded solids on a floor; `icon` draws an illustrated object
+             (iso.ICONS) instead of a plain solid, and a step's `icon` map swaps it
 
 Every frame is a pure function of t. `state(t)` collects every parameter the drawing depends on (entrance progress,
 colours mid-transition, positions mid-move, token positions...) and `layer(state)` draws exactly that state at 2x and
@@ -25,6 +27,7 @@ from dataclasses import dataclass, field
 
 from PIL import Image, ImageDraw
 
+from . import iso as I
 from . import text as T
 from .styles import rgb
 
@@ -38,6 +41,9 @@ HOLD_S = 0.25               # pause at the far end before a token returns
 PULSE_S = 0.6               # activation / arrival pulse
 STAGGER_S = 0.12            # default delay between several ids in one step
 CACHE_LAYERS = 8            # finished layers kept per diagram
+U3D = 88                    # 3d look: px per world unit (a node's footprint is one unit square)
+BLEED_3D = 48               # 3d: px the layer extends past the layout area (shadows and floor rings near its edge)
+FLOOR_MARGIN = 0.24         # 3d: room below a footprint (world units) for its shadow and floor ring
 
 STATES = ("idle", "active", "done", "error")
 SHAPES = ("box", "pill", "circle", "diamond")
@@ -118,6 +124,7 @@ class Node:
     state: Track = field(default_factory=lambda: Track("idle"))
     dim: Track = field(default_factory=lambda: Track(0))
     text: Track = field(default_factory=lambda: Track(""))
+    icon: Track = field(default_factory=lambda: Track(""))
     moves: list = field(default_factory=list)      # (t, x, y, ease)
     pulses: list = field(default_factory=list)     # pulse start times (activation, a token arriving)
 
@@ -284,32 +291,42 @@ def _flows_of(step: dict) -> list:
 class Diagram:
     def __init__(self, sc: dict, st: dict, area, prev_area=None):
         self.st = st
+        self.look = sc.get("look", "flat")
+        self.pad = BLEED_3D if self.look == "3d" else 0
         x0, y0, x1, y1 = area
         self.area = (int(x0), int(y0), int(math.ceil(x1)), int(math.ceil(y1)))
         self.font = T.font("medium", 46 * SS)
         self.sub_font = T.font("medium", 32 * SS)
         self.small = T.font("bold", 34 * SS)
+        self.label3d = T.font("bold", 36 * SS)
         self._cache: OrderedDict = OrderedDict()
         good, bad = rgb(st.get("good", st["accent"])), rgb(st.get("bad", st["accent2"]))
         self.hot = {"idle": rgb(st["muted"]), "active": rgb(st["accent"]), "done": good, "error": bad}
         card = rgb(st["card"])
         self.colours = {"idle": (card, rgb(st["line"])), "active": (_mix(card, self.hot["active"], 0.18), self.hot["active"]),
                         "done": (_mix(card, good, 0.18), good), "error": (_mix(card, bad, 0.18), bad)}
+        self.solid = {"idle": _mix(card, rgb(st["ink"]), 0.16), "active": _mix(card, self.hot["active"], 0.72),
+                      "done": _mix(card, good, 0.72), "error": _mix(card, bad, 0.74)}      # 3d: top-face colours
+        self.pal = {"accent": self.hot["active"], "accent2": rgb(st["accent2"]), "good": good, "bad": bad}
         labels = {nd["id"]: [nd["label"]] for nd in sc["nodes"]}       # every label each node will show
+        icons = {nd["id"]: [nd.get("icon", "")] for nd in sc["nodes"]}
         for step in sc.get("steps", []):
             for i, text in (step.get("label") or {}).items():
                 labels.setdefault(i, []).append(text)
+            for i, name in (step.get("icon") or {}).items():
+                icons.setdefault(i, []).append(name)
         auto = auto_layout(sc.get("layout", "manual"), sc["nodes"], sc.get("center"))
         W, H = x1 - x0, y1 - y0
         self.nodes: dict[str, Node] = {}
         for nd in sc["nodes"]:
             fx, fy = (nd["x"], nd["y"]) if "x" in nd and "y" in nd else auto.get(nd["id"], (0.5, 0.5))
             shape, sub = nd.get("shape", "box"), nd.get("sub", "")
-            measure = self._measurer(shape, sub)
+            measure = self._measurer(shape, sub, max(self._top_units(i, shape) for i in icons[nd["id"]]))
             sizes = [measure(text) for text in labels[nd["id"]]]
             node = Node(nd["id"], nd["label"], shape, x0 + fx * W, y0 + fy * H, max(w for w, _ in sizes),
                         max(h for _, h in sizes), sub, measure)
             node.text = Track(nd["label"])
+            node.icon = Track(nd.get("icon", ""))
             self.nodes[nd["id"]] = node
         self.groups = {g["id"]: Group(g["id"], g.get("label", ""), list(g["nodes"])) for g in sc.get("groups", [])}
         self._fit(sc, auto)
@@ -335,8 +352,17 @@ class Diagram:
         for f in self.flows:
             self._plan_flow(f)
 
-    def _measurer(self, shape: str, sub: str):
+    @staticmethod
+    def _top_units(icon: str, shape: str) -> float:
+        """3d: how far the object's highest point rises above its base point, in world units."""
+        if icon:
+            return I.ICONS[icon][1]
+        return {"circle": 1.0, "diamond": 0.95}.get(shape, I.SHAPE_HEIGHT.get(shape, 0.55) + 0.5)
+
+    def _measurer(self, shape: str, sub: str, top: float = 1.0):
         cache = {}
+        if self.look == "3d":
+            return self._measurer3d(sub, top)
 
         def measure(text: str):
             if text not in cache:
@@ -349,6 +375,21 @@ class Diagram:
                 elif shape == "diamond":
                     w, h = w * 1.4, h * 1.6
                 cache[text] = (w, h)
+            return cache[text]
+        return measure
+
+    def _measurer3d(self, sub: str, top: float):
+        """3d look: room for the label above the object, the tallest object it shows, its footprint and the floor
+        around it (shadow, ring)."""
+        cache = {}
+        fw, fh = I.iso_size(U3D)
+
+        def measure(text: str):
+            if text not in cache:
+                lines = text.split("\n")
+                tw = max(self.label3d.getlength(line) for line in lines) / SS
+                label_h = 52 + 44 * (len(lines) - 1) + (34 if sub else 0)
+                cache[text] = (max(fw + 36, tw + 56), label_h + 16 + top * U3D + fh / 2 + FLOOR_MARGIN * U3D)
             return cache[text]
         return measure
 
@@ -379,11 +420,16 @@ class Diagram:
                 else:
                     n.y = pos + size / 2
                 pos += size + (need[k] + extra if k < len(need) else 0)
-        grouped = {m: g for g in self.groups.values() for m in g.members}
         for n in self.nodes.values():
-            side, top = (34, 70 if grouped[n.id].label else 34) if n.id in grouped else (8, 8)
-            n.x = clamp(n.x, x0 + n.w / 2 + side, max(x0 + n.w / 2 + side, x1 - n.w / 2 - side))
-            n.y = clamp(n.y, y0 + n.h / 2 + top, max(y0 + n.h / 2 + top, y1 - n.h / 2 - side))
+            self._clamp(n)
+
+    def _clamp(self, n: Node):
+        """Keep a node, with room for its group's frame, inside the diagram area."""
+        x0, y0, x1, y1 = self.area
+        g = next((g for g in reversed(list(self.groups.values())) if n.id in g.members), None)   # as before: the last
+        side, top = (34, 70 if g.label else 34) if g else (8, 8)
+        n.x = clamp(n.x, x0 + n.w / 2 + side, max(x0 + n.w / 2 + side, x1 - n.w / 2 - side))
+        n.y = clamp(n.y, y0 + n.h / 2 + top, max(y0 + n.h / 2 + top, y1 - n.h / 2 - side))
 
     def extent(self) -> tuple[float, float, float, float]:
         """The settled diagram's bounding box (final node positions, group frames included), canvas px."""
@@ -429,8 +475,11 @@ class Diagram:
             carried.add(nid)
             n.show = -math.inf
             n.state, n.dim, n.text = Track(o.state.last()), Track(o.dim.last()), Track(o.text.last())
+            n.icon = Track(o.icon.last()) if self.look == "3d" else n.icon
             cw, ch = n.measure(o.text.last())
             n.w, n.h = max(n.w, cw), max(n.h, ch)
+            if self.look == "3d":                       # a carried label can be wider than this scene's own
+                self._clamp(n)
             ox, oy = o.pos(end)
             if abs(ox - n.x) > 0.5 or abs(oy - n.y) > 0.5:
                 n.moves.append((end, n.x, n.y, "in_out_cubic"))
@@ -481,6 +530,8 @@ class Diagram:
                     self._el(i).dim.set(t, 0)
             for i, text in (step.get("label") or {}).items():
                 self.nodes[i].text.set(t, text)
+            for i, name in (step.get("icon") or {}).items():
+                self.nodes[i].icon.set(t, name)
             x0, y0, x1, y1 = self.area
             for i, to in (step.get("move") or {}).items():
                 self.nodes[i].moves.append((t, x0 + to["x"] * (x1 - x0), y0 + to["y"] * (y1 - y0),
@@ -534,8 +585,12 @@ class Diagram:
             s0, s1, sk = n.state.at(t)
             l0, l1, lk = n.text.at(t)
             entering = n.show != -math.inf and t - n.show < ENTER_S
-            nodes.append((r(appear), entering, *map(r, n.pos(t)), STATES.index(s0), STATES.index(s1), r(sk),
-                          r(n.dim.blend(t)), l0, l1, r(lk), r(self._pulse(n, t)), *map(r, n.size(t))))
+            node = (r(appear), entering, *map(r, n.pos(t)), STATES.index(s0), STATES.index(s1), r(sk),
+                    r(n.dim.blend(t)), l0, l1, r(lk), r(self._pulse(n, t)), *map(r, n.size(t)))
+            if self.look == "3d":
+                i0, i1, ik = n.icon.at(t, 2 * TRANS_S)
+                node += (i0, i1, r(ik))
+            nodes.append(node)
         edges = []
         for e in self.edges.values():
             p = self._appear(e.draw, e.hide, t, DRAW_S)
@@ -563,9 +618,9 @@ class Diagram:
 
     # ---------- drawing (2x local coordinates) ----------
     def _xy(self, x, y):
-        return (x - self.area[0]) * SS, (y - self.area[1]) * SS
+        return (x - self.area[0] + self.pad) * SS, (y - self.area[1] + self.pad) * SS
 
-    def _group(self, d, g: Group, s):
+    def _group(self, d, g: Group, s, plate: bool = False):
         p, dim, centres = s
         a = EASE["out_cubic"](p) * (1 - 0.65 * dim)
         boxes = []
@@ -576,7 +631,9 @@ class Diagram:
         X0, Y0 = self._xy(min(b[0] for b in boxes) - pad, min(b[1] for b in boxes) - top)
         X1, Y1 = self._xy(max(b[2] for b in boxes) + pad, max(b[3] for b in boxes) + pad)
         st = self.st
-        d.rounded_rectangle([X0, Y0, X1, Y1], 30 * SS, fill=rgb(st["bg2"]) + (round(170 * a),),
+        if plate:                                   # 3d: a raised plate on the floor, with a visible edge
+            d.rounded_rectangle([X0, Y0 + 10 * SS, X1, Y1 + 10 * SS], 30 * SS, fill=rgb(st["line"]) + (round(255 * a),))
+        d.rounded_rectangle([X0, Y0, X1, Y1], 30 * SS, fill=rgb(st["bg2"]) + (round((255 if plate else 170) * a),),
                             outline=rgb(st["line"]) + (round(255 * a),), width=3 * SS)
         if g.label:
             d.text((X0 + 26 * SS, Y0 + 32 * SS), g.label, font=self.small, fill=rgb(st["muted"]) + (round(255 * a),),
@@ -666,12 +723,20 @@ class Diagram:
                 for sy in (-1, 1):
                     d.line([(bx - 8 * SS, by - 8 * SS * sy), (bx + 8 * SS, by + 8 * SS * sy)], fill=ink, width=5 * SS)
 
+    def _anchor(self, shape, x, y, w, h):
+        """Where connectors attach: the node's outline (flat), or its footprint on the floor (3d)."""
+        if self.look != "3d":
+            return Box(shape, w, h), (x, y)
+        fw, fh = I.iso_size(U3D)
+        return Box("diamond", fw * 1.16, fh * 1.16), (x, y + h / 2 - FLOOR_MARGIN * U3D)
+
     def _flow_path(self, f: dict, reverse=False) -> Path:
         pts = []
         for c in f["chain"]:
             e = self.edges[c]
             A, B = self.nodes[e.a], self.nodes[e.b]
-            pts += route_points(e.route, A.box(f["t"]), A.pos(f["t"]), B.box(f["t"]), B.pos(f["t"]))
+            pts += route_points(e.route, *self._anchor(A.shape, *A.pos(f["t"]), *A.size(f["t"])),
+                                *self._anchor(B.shape, *B.pos(f["t"]), *B.size(f["t"])))
         return Path(pts[::-1] if reverse else pts)
 
     def _token(self, d, f: dict, k: float, reverse: bool, part: str):
@@ -711,8 +776,11 @@ class Diagram:
             return self._cache[state]
         groups, edges, nodes, flows = state
         x0, y0, x1, y1 = self.area
-        big = Image.new("RGBA", ((x1 - x0) * SS, (y1 - y0) * SS), (0, 0, 0, 0))
+        big = Image.new("RGBA", ((x1 - x0 + 2 * self.pad) * SS, (y1 - y0 + 2 * self.pad) * SS), (0, 0, 0, 0))
         d = ImageDraw.Draw(big, "RGBA")             # blend translucent fills (halos, frames) instead of replacing
+        if self.look == "3d":
+            self._layer3d(big, d, state)
+            return self._keep(state, big.reduce(SS))
         for g, s in zip(self.groups.values(), groups):
             if s:
                 self._group(d, g, s)
@@ -728,11 +796,217 @@ class Diagram:
                 self._node(d, n, s)
         for f, k, rev in tokens:
             self._token(d, f, k, rev, "label")
-        small = big.reduce(SS)                      # 2x2 box average: the exact supersampling filter, no ringing
+        return self._keep(state, big.reduce(SS))    # 2x2 box average: the exact supersampling filter, no ringing
+
+    def _keep(self, state, small):
         self._cache[state] = small
         if len(self._cache) > CACHE_LAYERS:
             self._cache.popitem(last=False)
         return small
 
+    # ---------- the 3d look: isometric, flat-shaded solids ----------
+    def _layer3d(self, big, d, state):
+        """Floor first (group plates, shadows, connectors), then every solid from back to front (nodes and token
+        cubes, by how far down the screen they stand), then labels on top so text is never hidden."""
+        groups, edges, nodes, flows = state
+        for g, s in zip(self.groups.values(), groups):
+            if s:
+                self._group(d, g, s, plate=True)
+        shown = [(n, s) for n, s in zip(self.nodes.values(), nodes) if s]
+        for n, s in shown:
+            self._floor3d(d, n, s)
+        drawn = []
+        for e, s in zip(self.edges.values(), edges):
+            if s:
+                drawn.append((e, self._edge3d(d, e, s), s))
+        tokens = [(f, k, rev) for f, (out, back) in zip(self.flows, flows) for k, rev in ((out, False), (back, True))
+                  if k >= 0]
+        solids = [(self._base(s)[1], 0, i, ("node", n, s)) for i, (n, s) in enumerate(shown)]
+        for i, (f, k, rev) in enumerate(tokens):
+            x, y, ang, fade = self._token_at(f, k, rev)
+            solids.append((y * SS, 1, i, ("token", (f, k, rev), (x, y, fade))))
+        for _, _, _, (kind, a, b) in sorted(solids, key=lambda s: s[:3]):
+            if kind == "node":
+                self._solid3d(big, d, a, b)
+            else:
+                self._cube3d(d, a, b)
+        for e, path, s in drawn:
+            label, fade = s[6], (s[0] if s[1] else 1.0) * (1 - 0.7 * s[5])
+            if e.label and label * fade > 0:
+                self._edge_label(d, e.label, path, label * fade)
+        for n, s in shown:
+            self._label3d(d, n, s)
+        for f, k, rev in tokens:
+            self._token(d, f, k, rev, "label")
+
+    def _base(self, s):
+        """A node's base point (the centre of its footprint), 2x local px."""
+        x, y, nh = s[2], s[3], s[13]
+        return self._xy(x, y + nh / 2 - FLOOR_MARGIN * U3D)
+
+    def _lift(self, s) -> float:
+        """How high the object floats (world units): dropping in on entrance, a small hop on each pulse."""
+        appear, entering, pulse = s[0], s[1], s[11]
+        return (1 - EASE["out_cubic"](appear)) * 0.9 * entering + 0.18 * pulse
+
+    def _alpha(self, s) -> float:
+        return EASE["out_cubic"](s[0]) * (1 - 0.68 * s[7])
+
+    def _floor3d(self, d, n: Node, s):
+        """The node's shadow, and a ring on the floor while it is lit or pulsing."""
+        a, (bx, by), u = self._alpha(s), self._base(s), U3D * SS
+        g = I.Iso(d, bx, by, u, 0)
+        lift = self._lift(s)
+        k = max(0.0, 1 - lift * 0.6)
+        sh = rgb(self.st["bg"])
+        sh = I.shade(sh, 0.55) if sum(sh) > 150 else I.shade(sh, 0.5)
+        o = 0.16
+        d.polygon([g.P(-0.5 * k + o, -0.5 * k + o), g.P(0.5 * k + o, -0.5 * k + o), g.P(0.5 * k + o, 0.5 * k + o),
+                   g.P(-0.5 * k + o, 0.5 * k + o)], fill=sh + (round(230 * a),))
+        s0, s1, sk, pulse = s[4], s[5], s[6], s[11]
+        lit = _lit(s0, s1, sk)
+        if lit > 0 or pulse > 0:
+            col = _mix(self.hot[STATES[s0]], self.hot[STATES[s1]], sk)
+            r = 0.68 + 0.12 * pulse
+            ring = [g.P(r * math.cos(2 * math.pi * i / 48), r * math.sin(2 * math.pi * i / 48)) for i in range(48)]
+            d.polygon(ring, outline=col + (round(255 * a * max(lit, pulse) * 0.9),), width=round(4 * SS))
+
+    def _solid3d(self, big, d, n: Node, s):
+        a = self._alpha(s)
+        bx, by = self._base(s)
+        u = U3D * SS
+        by -= self._lift(s) * u
+        if a >= 0.999:
+            self._object(d, n, s, bx, by, u)
+            return
+        x0, y0 = max(0, int(bx - 1.4 * u)), max(0, int(by - 2.0 * u))
+        x1, y1 = min(big.width, int(bx + 1.4 * u)), min(big.height, int(by + 0.9 * u))
+        if x1 <= x0 or y1 <= y0:
+            return
+        tmp = Image.new("RGBA", (x1 - x0, y1 - y0), (0, 0, 0, 0))
+        self._object(ImageDraw.Draw(tmp, "RGBA"), n, s, bx - x0, by - y0, u)   # drawn opaque, faded as one
+        tmp.putalpha(tmp.getchannel("A").point(lambda v: round(v * a)))
+        big.alpha_composite(tmp, (x0, y0))
+
+    def _object(self, d, n: Node, s, bx, by, u):
+        s0, s1, sk = s[4], s[5], s[6]
+        top = _mix(self.solid[STATES[s0]], self.solid[STATES[s1]], sk)
+        i0, i1, ik = s[14], s[15], s[16]
+        if not (i0 or i1):
+            I.solid(I.Iso(d, bx, by, u, 2 * SS), n.shape, top)
+            return
+        I.Iso(d, bx, by, u, 2 * SS).box(-0.5, -0.5, 0, 0.5, 0.5, 0.1, top)
+        if i0 != i1 and ik < 1:                     # a new object: the old one shrinks away, the new one pops up
+            name, k = (i0, 1 - 2 * ik) if ik < 0.5 else (i1, EASE["out_back"](2 * ik - 1))
+        else:
+            name, k = i1, 1.0
+        if name and k > 0.02:
+            I.ICONS[name][0](I.Iso(d, bx, by, u * k, 2 * SS), self.pal)          # objects stand on the tile (z 0.1)
+
+    def _label3d(self, d, n: Node, s):
+        """A flat label facing the viewer above the object (crisp text, never skewed), with the done / error
+        badge at its corner."""
+        a = self._alpha(s)
+        bx, by = self._base(s)
+        u = U3D * SS
+        i0, i1, ik = s[14], s[15], s[16]
+        name = i1 if (ik >= 0.5 or not i0) else i0
+        height = self._top_units(name, n.shape)
+        ty = by - (height + self._lift(s)) * u - 14 * SS
+        l0, l1, lk = s[8], s[9], s[10]
+        f = self.label3d
+        w0, w1 = (max(f.getlength(x) for x in text.split("\n")) for text in (l0, l1))
+        tw = w0 + (w1 - w0) * EASE["in_out_cubic"](lk) if l0 != l1 else w1
+        lines = max(len(l0.split("\n")), len(l1.split("\n")))
+        h = (52 + 44 * (lines - 1) + (34 if n.sub else 0)) * SS
+        X0, X1, Y1 = bx - tw / 2 - 22 * SS, bx + tw / 2 + 22 * SS, ty
+        Y0 = Y1 - h
+        st = self.st
+        s0, s1, sk = s[4], s[5], s[6]
+        edge = _mix(self.colours[STATES[s0]][1], self.colours[STATES[s1]][1], sk)
+        d.rounded_rectangle([X0, Y0, X1, Y1], 18 * SS, fill=rgb(st["bg"]) + (round(225 * a),),
+                            outline=edge + (round(255 * a * max(0.35, _lit(s0, s1, sk))),), width=2 * SS)
+        cy = Y0 + (h - (34 * SS if n.sub else 0)) / 2
+        for text, k in (((l0, 1 - lk), (l1, lk)) if l0 != l1 else ((l1, 1.0),)):
+            if k > 0:
+                d.multiline_text((bx, cy), text, font=f, fill=rgb(st["ink"]) + (round(255 * a * k),), anchor="mm",
+                                 align="center", spacing=8 * SS)
+        if n.sub:
+            d.text((bx, Y1 - 22 * SS), n.sub, font=self.sub_font, fill=rgb(st["muted"]) + (round(255 * a),),
+                   anchor="mm")
+        if s1 in (2, 3) or (s0 in (2, 3) and sk < 1):
+            which, k = (s1, sk) if s1 in (2, 3) else (s0, 1 - sk)
+            self._badge(d, X1 - 4 * SS, Y0 + 4 * SS, which, self.hot[STATES[which]], k * a)
+
+    def _badge(self, d, bx, by, which, col, a):
+        R = 20 * SS
+        d.ellipse([bx - R, by - R, bx + R, by + R], fill=col + (round(255 * a),))
+        ink = rgb(self.st["bg"]) + (round(255 * a),)
+        if which == 2:
+            d.line([(bx - 9 * SS, by), (bx - 2 * SS, by + 7 * SS), (bx + 10 * SS, by - 8 * SS)], fill=ink,
+                   width=5 * SS, joint="curve")
+        else:
+            for sy in (-1, 1):
+                d.line([(bx - 8 * SS, by - 8 * SS * sy), (bx + 8 * SS, by + 8 * SS * sy)], fill=ink, width=5 * SS)
+
+    def _edge3d(self, d, e: Edge, s) -> Path:
+        """A flat strip on the floor with a darker lip (its thickness) and a flat arrowhead lying on the floor."""
+        p, hiding, s0, s1, sk, dim, label, ax, ay, bx, by, aw, ah, bw, bh = s
+        path = Path(route_points(e.route, *self._anchor(self.nodes[e.a].shape, ax, ay, aw, ah),
+                                 *self._anchor(self.nodes[e.b].shape, bx, by, bw, bh)))
+        frac = 1.0 if hiding else EASE["in_out_sine"](p)
+        fade = (p if hiding else 1.0) * (1 - 0.7 * dim)
+        col = _mix(self.hot[STATES[s0]], self.hot[STATES[s1]], sk)
+        lip = I.shade(col, 0.45)
+        L = path.length * frac
+        pts = [self._xy(x, y) for x, y in path.upto(max(L - 22, 0.5))]
+        w = round((9 + 3 * _lit(s0, s1, sk)) * SS)
+        A = round(255 * fade)
+        if len(pts) >= 2:
+            d.line([(x, y + 4 * SS) for x, y in pts], fill=lip + (A,), width=w, joint="curve")
+            d.line(pts, fill=col + (A,), width=w, joint="curve")
+        x, y, ang = path.point_at(L)
+        hx, hy = self._xy(x, y)
+        H, half = 34 * SS, 0.5
+
+        def head(dy):
+            return [(hx, hy + dy),
+                    (hx - H * math.cos(ang - half), hy - H * math.sin(ang - half) * 0.62 + dy),
+                    (hx - H * math.cos(ang + half), hy - H * math.sin(ang + half) * 0.62 + dy)]
+        d.polygon(head(4 * SS), fill=lip + (A,))
+        d.polygon(head(0), fill=col + (A,))
+        return path
+
+    def _token_at(self, f, k, reverse):
+        path = self._flow_path(f, reverse != bool(f.get("reverse")))
+        x, y, ang = path.point_at(EASE[f["ease"]](k) * path.length)
+        return x, y, ang, min(1.0, k * 6, (1 - k) * 6 + 0.4)
+
+    def _cube3d(self, d, tok, where):
+        f, k, rev = tok
+        x, y, fade = where
+        X, Y = self._xy(x, y)
+        u = U3D * SS
+        col = rgb(self.st["accent" if rev else "accent2"])
+        g = I.Iso(d, X, Y, u, 2 * SS)
+        sh = I.shade(rgb(self.st["bg"]), 0.5) + (round(200 * fade),)
+        d.polygon([g.P(-0.1, -0.1), g.P(0.22, -0.1), g.P(0.22, 0.22), g.P(-0.1, 0.22)], fill=sh)
+        hop = 0.08 * abs(math.sin(math.pi * k * 3))
+        if fade >= 0.999:
+            I.Iso(d, X, Y - hop * u, u, 2 * SS).box(-0.17, -0.17, 0.04, 0.17, 0.17, 0.38, col)
+        else:
+            a = round(255 * fade)
+            gg = I.Iso(d, X, Y - hop * u, u, 0)
+            for face, k2 in (("l", I.LEFT), ("r", I.RIGHT), ("t", I.TOP)):
+                q, z0, z1 = 0.17, 0.04, 0.38
+                pts = {"l": [(-q, q, z0), (q, q, z0), (q, q, z1), (-q, q, z1)],
+                       "r": [(q, -q, z0), (q, q, z0), (q, q, z1), (q, -q, z1)],
+                       "t": [(-q, -q, z1), (q, -q, z1), (q, q, z1), (-q, q, z1)]}[face]
+                d.polygon([gg.P(*q) for q in pts], fill=I.shade(col, k2) + (a,))
+
     def draw(self, canvas: Image.Image, t: float, p: float = 1.0) -> None:
-        canvas.alpha_composite(self.layer(self.state(t)), self.area[:2])
+        x0, y0 = self.area[0] - self.pad, self.area[1] - self.pad
+        layer = self.layer(self.state(t))
+        if x0 < 0 or y0 < 0:                        # never past the canvas edge
+            layer = layer.crop((max(0, -x0), max(0, -y0), layer.width, layer.height))
+        canvas.alpha_composite(layer, (max(0, x0), max(0, y0)))

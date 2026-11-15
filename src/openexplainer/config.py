@@ -28,10 +28,12 @@ SFX_CUE = {"type": "object", "required": ["at"], "fields": {
 ITEM = {"type": ["object", "string"], "required": ["text"], "fields": {"text": S, "at": CUE}}
 IDS = {"type": "array", "items": S}
 UNIT = {"type": "number", "min": 0, "max": 1}
+ICONS = ["robot", "person", "flag", "magnifier", "clipboard", "toolbox", "gear", "shield", "plane", "document",
+         "files", "coins", "trash", "warning", "calendar", "server", "globe"]
 EASES = ["linear", "in_out_sine", "out_sine", "out_cubic", "in_out_cubic", "out_quint", "in_out_quint", "out_expo",
          "out_back", "spring"]
 NODE = {"type": "object", "required": ["id", "label"], "fields": {
-    "id": S, "label": S, "x": UNIT, "y": UNIT, "sub": S,
+    "id": S, "label": S, "x": UNIT, "y": UNIT, "sub": S, "icon": {"type": "string", "enum": ICONS},
     "shape": {"type": "string", "enum": ["box", "pill", "circle", "diamond"]}}}
 EDGE = {"type": "object", "required": ["from", "to"], "fields": {
     "id": S, "from": S, "to": S, "label": S, "route": {"type": "string", "enum": ["straight", "curve", "elbow"]}}}
@@ -44,6 +46,7 @@ STEP = {"type": "object", "required": ["at"], "fields": {
     "at": CUE, "show": IDS, "hide": IDS, "draw": IDS, "activate": IDS, "deactivate": IDS, "done": IDS, "error": IDS,
     "dim": IDS, "undim": IDS, "focus": IDS, "unfocus": {"type": "boolean"},
     "label": {"type": "object", "values": S}, "move": {"type": "object", "values": MOVE},
+    "icon": {"type": "object", "values": {"type": "string", "enum": ICONS}},
     "flow": {"type": ["object", "array"], "fields": FLOW["fields"], "items": FLOW},
     "ease": {"type": "string", "enum": EASES}, "stagger": {"type": "number", "min": 0, "max": 2}}}
 
@@ -56,7 +59,7 @@ SCENE = {"type": "object", "required": ["id", "type", "say"], "fields": {
     "items": {"type": "array", "items": ITEM},
     "nodes": {"type": "array", "items": NODE}, "edges": {"type": "array", "items": EDGE},
     "steps": {"type": "array", "items": STEP}, "groups": {"type": "array", "items": GROUP},
-    "center": S, "continue": {"type": "boolean"},
+    "center": S, "continue": {"type": "boolean"}, "look": {"type": "string", "enum": ["flat", "3d"]},
     "left": {"type": "object", "fields": {"title": S, "items": {"type": "array", "items": ITEM}, "at": CUE}},
     "right": {"type": "object", "fields": {"title": S, "items": {"type": "array", "items": ITEM}, "at": CUE}},
     "at": CUE,

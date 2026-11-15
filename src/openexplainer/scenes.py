@@ -563,7 +563,7 @@ def check_diagram(sc) -> None:
     for k, step in enumerate(sc.get("steps", [])):
         where = f"steps[{k}]"
         bad = [i for key, ok in kinds.items() for i in step.get(key, []) if i not in ok]
-        bad += [i for key in ("label", "move") for i in (step.get(key) or {}) if i not in nodes]
+        bad += [i for key in ("label", "move", "icon") for i in (step.get(key) or {}) if i not in nodes]
         if bad:
             fail(where, f"unknown id(s) {bad}")
         flows = [step["flow"]] if isinstance(step.get("flow"), dict) else step.get("flow", [])
@@ -577,6 +577,10 @@ def check_diagram(sc) -> None:
                 if edge_ends[c0][1] != edge_ends[c1][0]:
                     fail(where, f"flow path breaks between {c0} and {c1}: {c0} ends at {edge_ends[c0][1]}, "
                                 f"{c1} starts at {edge_ends[c1][0]}")
+    icons = [n["id"] for n in sc["nodes"] if n.get("icon")] + [i for s in sc.get("steps", []) for i in (s.get("icon") or {})]
+    if icons and sc.get("look", "flat") != "3d":
+        raise OexError(f"scene {sc['id']}: icon(s) on {sorted(set(icons))} need the 3d look",
+                       "add \"look\": \"3d\" to the scene, or remove the icons")
     if sc.get("layout", "manual") == "manual":
         loose = [n["id"] for n in sc["nodes"] if "x" not in n or "y" not in n]
         if loose:
@@ -612,7 +616,7 @@ BUILDERS = {
 
 # ---------------- background ----------------
 
-def background(W: int, H: int, st: dict) -> Image.Image:
+def background(W: int, H: int, st: dict, iso: bool = False) -> Image.Image:
     im = Image.new("RGBA", (W, H), rgb(st["bg"]) + (255,))
     d = ImageDraw.Draw(im)
     c2 = rgb(st["bg2"])
@@ -620,6 +624,9 @@ def background(W: int, H: int, st: dict) -> Image.Image:
         for y in range(40, H, 48):
             for x in range(40, W, 48):
                 d.ellipse([x - 2, y - 2, x + 2, y + 2], fill=c2)
+    elif st["decor"] == "grid" and iso:          # a 3d diagram stands on an isometric floor
+        from .iso import floor_grid
+        floor_grid(d, W, H, 160, c2)
     elif st["decor"] == "grid":
         for x in range(0, W, 80):
             d.line([(x, 0), (x, H)], fill=c2, width=1)
