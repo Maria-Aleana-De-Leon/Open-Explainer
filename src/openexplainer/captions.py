@@ -83,8 +83,9 @@ class Burner:
             txt = T.render(lay, self.st["ink"], self.st["accent"])
             pad_x, pad_y = 34, 16
             pill = Image.new("RGBA", (txt.width + pad_x * 2, txt.height + pad_y * 2), (0, 0, 0, 0))
-            ImageDraw.Draw(pill).rounded_rectangle([0, 0, pill.width - 1, pill.height - 1], 22,
-                                                   fill=rgb(self.st["card"]) + (232,))
+            if self.st.get("boxes", True):              # styles without boxes: the caption is plain text
+                ImageDraw.Draw(pill).rounded_rectangle([0, 0, pill.width - 1, pill.height - 1], 22,
+                                                       fill=rgb(self.st["card"]) + (232,))
             pill.alpha_composite(txt, (pad_x, pad_y))
             if len(self.cache) > 600:
                 self.cache.clear()

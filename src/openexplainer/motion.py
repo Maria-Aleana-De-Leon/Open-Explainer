@@ -307,6 +307,8 @@ class Diagram:
                         "done": (_mix(card, good, 0.18), good), "error": (_mix(card, bad, 0.18), bad)}
         self.solid = {"idle": _mix(card, rgb(st["ink"]), 0.16), "active": _mix(card, self.hot["active"], 0.72),
                       "done": _mix(card, good, 0.72), "error": _mix(card, bad, 0.74)}      # 3d: top-face colours
+        self.boxes = st.get("boxes", True)              # False: text without pills behind it (halo instead)
+        self.halo = rgb(st["bg"])
         self.pal = {"accent": self.hot["active"], "accent2": rgb(st["accent2"]), "good": good, "bad": bad}
         labels = {nd["id"]: [nd["label"]] for nd in sc["nodes"]}       # every label each node will show
         icons = {nd["id"]: [nd.get("icon", "")] for nd in sc["nodes"]}
@@ -670,6 +672,10 @@ class Diagram:
         off = abs(nx) * (tw / 2 + 14) + abs(ny) * 22 + 22         # clear of a passing token's glow
         X, Y = self._xy(mx + nx * off, my + ny * off)
         a = round(255 * alpha)
+        if not self.boxes:
+            d.text((X, Y), label, font=self.small, fill=rgb(self.st["muted"]) + (a,), anchor="mm",
+                   stroke_width=5 * SS, stroke_fill=self.halo + (a,))
+            return
         d.rounded_rectangle([X - (tw / 2 + 14) * SS, Y - 22 * SS, X + (tw / 2 + 14) * SS, Y + 22 * SS], 22 * SS,
                             fill=rgb(self.st["bg"]) + (round(220 * alpha),))
         d.text((X, Y), label, font=self.small, fill=rgb(self.st["muted"]) + (a,), anchor="mm")
@@ -765,9 +771,14 @@ class Diagram:
                 bx0, by0 = X - r - 12 * SS - tw - 32 * SS, Y - 24 * SS     # labels sit on the right)
             else:                                       # otherwise above it
                 bx0, by0 = X - tw / 2 - 16 * SS, Y - r - 60 * SS
-            d.rounded_rectangle([bx0, by0, bx0 + tw + 32 * SS, by0 + 48 * SS], 24 * SS,
-                                fill=rgb(self.st["card"]) + (A,), outline=colour + (A,), width=2 * SS)
-            d.text((bx0 + tw / 2 + 16 * SS, by0 + 24 * SS), label, font=self.small, fill=colour + (A,), anchor="mm")
+            if self.boxes:
+                d.rounded_rectangle([bx0, by0, bx0 + tw + 32 * SS, by0 + 48 * SS], 24 * SS,
+                                    fill=rgb(self.st["card"]) + (A,), outline=colour + (A,), width=2 * SS)
+                d.text((bx0 + tw / 2 + 16 * SS, by0 + 24 * SS), label, font=self.small, fill=colour + (A,),
+                       anchor="mm")
+            else:
+                d.text((bx0 + tw / 2 + 16 * SS, by0 + 24 * SS), label, font=self.small, fill=colour + (A,),
+                       anchor="mm", stroke_width=5 * SS, stroke_fill=self.halo + (A,))
 
     def layer(self, state: tuple) -> Image.Image:
         """The finished diagram layer for a state. Depends only on the state, never on what was drawn before."""
@@ -852,14 +863,17 @@ class Diagram:
     def _alpha(self, s) -> float:
         return EASE["out_cubic"](s[0]) * (1 - 0.68 * s[7])
 
+    def _shadow_colour(self):
+        bg = rgb(self.st["bg"])
+        return I.mix(bg, rgb(self.st["ink"]), 0.13) if sum(bg) > 450 else I.shade(bg, 0.5)   # light / dark floor
+
     def _floor3d(self, d, n: Node, s):
         """The node's shadow, and a ring on the floor while it is lit or pulsing."""
         a, (bx, by), u = self._alpha(s), self._base(s), U3D * SS
         g = I.Iso(d, bx, by, u, 0)
         lift = self._lift(s)
         k = max(0.0, 1 - lift * 0.6)
-        sh = rgb(self.st["bg"])
-        sh = I.shade(sh, 0.55) if sum(sh) > 150 else I.shade(sh, 0.5)
+        sh = self._shadow_colour()
         o = 0.16
         d.polygon([g.P(-0.5 * k + o, -0.5 * k + o), g.P(0.5 * k + o, -0.5 * k + o), g.P(0.5 * k + o, 0.5 * k + o),
                    g.P(-0.5 * k + o, 0.5 * k + o)], fill=sh + (round(230 * a),))
@@ -924,13 +938,18 @@ class Diagram:
         st = self.st
         s0, s1, sk = s[4], s[5], s[6]
         edge = _mix(self.colours[STATES[s0]][1], self.colours[STATES[s1]][1], sk)
-        d.rounded_rectangle([X0, Y0, X1, Y1], 18 * SS, fill=rgb(st["bg"]) + (round(225 * a),),
-                            outline=edge + (round(255 * a * max(0.35, _lit(s0, s1, sk))),), width=2 * SS)
+        if self.boxes:
+            d.rounded_rectangle([X0, Y0, X1, Y1], 18 * SS, fill=rgb(st["bg"]) + (round(225 * a),),
+                                outline=edge + (round(255 * a * max(0.35, _lit(s0, s1, sk))),), width=2 * SS)
+        halo = {} if self.boxes else {"stroke_width": 5 * SS}
         cy = Y0 + (h - (34 * SS if n.sub else 0)) / 2
         for text, k in (((l0, 1 - lk), (l1, lk)) if l0 != l1 else ((l1, 1.0),)):
             if k > 0:
-                d.multiline_text((bx, cy), text, font=f, fill=rgb(st["ink"]) + (round(255 * a * k),), anchor="mm",
-                                 align="center", spacing=8 * SS)
+                A = round(255 * a * k)
+                if halo:
+                    halo["stroke_fill"] = self.halo + (A,)
+                d.multiline_text((bx, cy), text, font=f, fill=rgb(st["ink"]) + (A,), anchor="mm",
+                                 align="center", spacing=8 * SS, **halo)
         if n.sub:
             d.text((bx, Y1 - 22 * SS), n.sub, font=self.sub_font, fill=rgb(st["muted"]) + (round(255 * a),),
                    anchor="mm")
@@ -989,7 +1008,7 @@ class Diagram:
         u = U3D * SS
         col = rgb(self.st["accent" if rev else "accent2"])
         g = I.Iso(d, X, Y, u, 2 * SS)
-        sh = I.shade(rgb(self.st["bg"]), 0.5) + (round(200 * fade),)
+        sh = self._shadow_colour() + (round(200 * fade),)
         d.polygon([g.P(-0.1, -0.1), g.P(0.22, -0.1), g.P(0.22, 0.22), g.P(-0.1, 0.22)], fill=sh)
         hop = 0.08 * abs(math.sin(math.pi * k * 3))
         if fade >= 0.999:

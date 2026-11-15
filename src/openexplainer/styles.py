@@ -26,6 +26,12 @@ STYLES: dict[str, dict] = {
         "accent2": "#F78C6B", "card": "#2A4D3F", "card_ink": "#F4F1E8", "line": "#3E6352", "marker": "#B5733F", "good": "#A6E08A", "bad": "#FF8A80",
         "radius": 16, "decor": "none", "transition": "wipe", "camera": "still",
     },
+    "white": {  # pure white, nothing behind text: plain labels and captions, no pills or boxes
+        "bg": "#FFFFFF", "bg2": "#F1F3F6", "ink": "#121826", "muted": "#5B6474", "accent": "#0E9F6E",
+        "accent2": "#2563EB", "card": "#FFFFFF", "card_ink": "#121826", "line": "#D5DAE1", "marker": "#FDE68A",
+        "good": "#16A34A", "bad": "#DC2626",
+        "radius": 24, "decor": "none", "transition": "fade", "camera": "still", "boxes": False,
+    },
     "pop": {  # bright, short-form
         "bg": "#FFE14D", "bg2": "#FFD60A", "ink": "#111111", "muted": "#3D3D3D", "accent": "#FF3D7F",
         "accent2": "#2B59FF", "card": "#FFFFFF", "card_ink": "#111111", "line": "#111111", "marker": "#FFFFFF", "good": "#11804A", "bad": "#D7261E",
@@ -34,10 +40,16 @@ STYLES: dict[str, dict] = {
 }
 
 
-def get(name: str, accent: str | None = None) -> dict:
+COLOUR_KEYS = ("bg", "bg2", "ink", "muted", "accent", "accent2", "card", "card_ink", "line", "marker", "good", "bad")
+
+
+def get(name: str, accent: str | None = None, colors: dict | None = None) -> dict:
+    """A style, with the project's `accent` and any `colors` overrides (for example a brand palette, or the
+    success colour `good`) applied on top."""
     s = dict(STYLES[name])
     if accent:
         s["accent"] = accent
+    s.update(colors or {})
     return s
 
 

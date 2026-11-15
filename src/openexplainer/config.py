@@ -81,6 +81,8 @@ PROJECT = {"type": "object", "required": ["title", "narration"], "fields": {
     "fps": {"type": "integer", "min": 12, "max": 60},
     "style": S,
     "accent": HEX,
+    "colors": {"type": "object", "fields": {k: HEX for k in ("bg", "bg2", "ink", "muted", "accent", "accent2", "card",
+                                                             "card_ink", "line", "marker", "good", "bad")}},
     "camera": {"type": "string", "enum": ["push", "still"]},
     "narration": {"type": "object", "required": ["audio"], "fields": {
         "audio": S, "language": {"type": ["string", "null"]}, "words": S, "prompt": S, "model": S}},

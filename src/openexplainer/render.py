@@ -57,7 +57,7 @@ class SceneFrames:
     def __init__(self, sc: dict, job: dict):
         self.sc = sc
         self.W, self.H = job["width"], job["height"]
-        self.st = get_style(job["style"], job.get("accent"))
+        self.st = get_style(job["style"], job.get("accent"), job.get("colors"))
         self.R = regions(self.W, self.H, job["mascot_pos"])
         self.bg = background(self.W, self.H, self.st, iso=sc.get("look") == "3d")
         self.built = BUILDERS[sc["type"]](sc, self.st, self.R, Path(job["root"]))
@@ -175,7 +175,8 @@ def jobs_for(proj, timeline: dict, preview: bool, mascot_for=None) -> list[tuple
     for i, sc in enumerate(scenes):
         fps = 12 if preview else timeline["fps"]
         job = {"width": timeline["width"], "height": timeline["height"], "fps": fps,
-               "style": proj.cfg["style"], "accent": proj.cfg.get("accent"), "camera": proj.cfg.get("camera"),
+               "style": proj.cfg["style"], "accent": proj.cfg.get("accent"), "colors": proj.cfg.get("colors"),
+               "camera": proj.cfg.get("camera"),
                "mascot_pos": pos,
                "captions": proj.cfg["captions"]["burn_in"], "caption_words": proj.cfg["captions"]["max_words"],
                "is_last": i == len(scenes) - 1, "root": str(proj.root),

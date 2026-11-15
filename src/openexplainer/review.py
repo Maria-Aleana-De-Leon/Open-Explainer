@@ -219,7 +219,7 @@ _ACTIONS = ("show", "hide", "draw", "activate", "deactivate", "done", "error", "
 def _motion(proj, scenes: list[dict], note, tl_size) -> None:
     """Animated-diagram prompts: motion should explain, on the words, one thing at a time."""
     from .styles import get as style
-    st = style(proj.cfg["style"], proj.cfg.get("accent"))
+    st = style(proj.cfg["style"], proj.cfg.get("accent"), proj.cfg.get("colors"))
     default_cam = proj.cfg.get("camera") or st["camera"]
     m = proj.cfg.get("mascot") or {}
     R = regions(tl_size[0], tl_size[1], m.get("position") if m.get("enabled") else None)

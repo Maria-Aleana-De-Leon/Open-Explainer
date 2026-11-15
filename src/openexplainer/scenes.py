@@ -496,7 +496,11 @@ def build_end(sc, st, R, root):
     y = (R.stage[1] + R.stage[3]) / 2 - t_sp.height / 2 - (60 if sc.get("cta") else 0)
     t0 = min(sc["t"], sc["start"] + 0.3)
     b.els.append(El(t_sp, _center_x(R, t_sp.width), y, t0, "rise"))
-    if sc.get("cta"):
+    if sc.get("cta") and not st.get("boxes", True):    # plain accent text instead of a pill
+        lay = T.layout(sc["cta"], "bold", sw - 120, 120, 48, align="center", max_lines=1)
+        tsp = T.render(lay, st["accent"], st["accent"])
+        b.els.append(El(tsp, _center_x(R, tsp.width), y + t_sp.height + 40, t0 + 0.5, "pop"))
+    elif sc.get("cta"):
         lay = T.layout(sc["cta"], "bold", sw - 120, 120, 48, align="center", max_lines=1)
         pill = card(lay.width + 90, lay.height + 44, (lay.height + 44) // 2, st["accent"])
         pad = pill.info["pad"]

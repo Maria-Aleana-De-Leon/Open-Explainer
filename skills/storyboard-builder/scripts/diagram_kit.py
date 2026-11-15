@@ -38,6 +38,8 @@ PALETTES = {
               "accent2": "#F78C6B", "line": "#3E6352", "marker": "#B5733F"},
     "pop": {"bg": "#FFE14D", "card": "#FFFFFF", "ink": "#111111", "muted": "#3D3D3D", "accent": "#FF3D7F",
             "accent2": "#2B59FF", "line": "#111111", "marker": "#FFFFFF"},
+    "white": {"bg": "#FFFFFF", "card": "#FFFFFF", "ink": "#121826", "muted": "#5B6474", "accent": "#0E9F6E",
+              "accent2": "#2563EB", "line": "#D5DAE1", "marker": "#FDE68A"},
 }
 
 
