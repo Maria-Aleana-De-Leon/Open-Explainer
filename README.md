@@ -12,7 +12,8 @@ the result.
 - **Your voice is the clock.** Every scene cut, entrance, highlight and mascot gesture lands on a word of your
   recording. Storyboards name *phrases*, not timestamps; the toolkit aligns them to the audio.
 - **Animated diagrams that explain.** Parts appear as they are named, connectors draw, requests and results travel
-  between them and states change on the narration's words; text stays perfectly steady.
+  between them and states change on the narration's words, as flat diagrams or as a 3d isometric scene of
+  flat-shaded objects (a robot, a person, a plane, a shield...); text stays perfectly steady.
 - **Your own mascot.** Copy-ready prompts turn a photo of you into a cartoon in ChatGPT; the importer checks,
   aligns and prepares the images (mouth shapes, blinks, poses) and shows a review sheet before anything renders.
 - **Deterministic and checkable.** Scenes are data (`storyboard.json`), rendered by code, cached per scene, and
@@ -28,14 +29,17 @@ the result.
 
 ## See it in action
 
-![A still from How AI Agents Work: the agent loop, with a $900 flight rejected and a $250 flight accepted](docs/showcase/poster.png)
+[![A still from How AI Agents Work: the agent loop, with a $900 flight rejected and a $250 flight accepted](docs/showcase/poster.png)](https://www.youtube.com/watch?v=7Bj8SgpydjI)
+
+**[Watch on YouTube](https://www.youtube.com/watch?v=7Bj8SgpydjI)** (1 minute).
 
 **How AI Agents Work** is a one-minute, 1080p explainer made with Open Explainer v0.3.0. Claude Code, using the
 toolkit's skills, built the storyboard from a short brief: animated diagrams whose parts appear, connect, pass
 results and change state on the narration's words (the agent loop, a worked flight-booking example with a retry,
 why checking matters, and asking before risky actions), with captions, music and sound effects, followed by the
-toolkit's quality checks. Four scenes were then refined in review by editing the storyboard only, with no custom
-code. The narration is the maintainer's voice, generated from the approved script with an ElevenLabs voice clone
+toolkit's quality checks. The published version uses the toolkit's 3d look (`"look": "3d"`) on the `white` style
+with an orange palette; its scenes were refined in review by editing the storyboard, with no code specific to this
+film. The narration is the maintainer's voice, generated from the approved script with an ElevenLabs voice clone
 and imported with `oex use-narration`. To make your own, follow the [Quick start](#quick-start).
 
 ## Quick start
@@ -64,6 +68,56 @@ With an agent: open this folder in Claude Code or Codex (the skills are in `.cla
 or install them for every project with `python tools/skills.py install --agent claude|codex|both`; then
 say *"make an explainer video about how GPS works"*. See [docs/INSTALL.md](docs/INSTALL.md).
 
+## Create Your Own Mascot & Visual Assets
+
+You can present your films with a cartoon version of yourself, and add small pictures for emphasis. You make the
+images in your own image generator (for example ChatGPT) with ready-made prompts; Open Explainer then cuts them
+into separate files, checks them and prepares them for the film. Your photo stays in your image tool: Open Explainer
+never needs, stores or uploads it.
+
+1. **Upload your own reference photo and create one master mascot.** Ask for a single full-body cartoon of you and
+   keep refining it until you are happy. This approved image is the master that every later step copies.
+   Prompt: [01-master-mascot.md](prompts/sheets/01-master-mascot.md).
+2. **Create consistent body poses.** Nine poses of the same character in one 3×3 sheet: standing, waving, pointing
+   right and left, presenting, thinking and three walking steps. Prompt: [03-pose-sheet.md](prompts/sheets/03-pose-sheet.md).
+3. **Generate facial expressions.** Nine head-and-shoulders expressions in one 3×3 sheet: neutral, happy, excited,
+   surprised, thinking, confused, worried, sad, frustrated. Prompt: [04-expression-sheet.md](prompts/sheets/04-expression-sheet.md).
+4. **Prepare mouthless bases for lip sync.** The same nine expressions with the mouths removed, so animated mouths
+   can be placed on the face. Prompt: [05-mouthless-sheet.md](prompts/sheets/05-mouthless-sheet.md).
+5. **Generate reusable mouth shapes.** Seven mouths for speech sounds (ah, ee, oh, closed, f/v, l, m) in one sheet.
+   Prompt: [02-mouth-sheet.md](prompts/sheets/02-mouth-sheet.md).
+6. **Generate video-editing stickers.** 25 small pictures (a lightbulb, a check mark, a trophy, arrows...) in one
+   5×5 sheet, in the style of an illustration you choose. Prompt:
+   [sticker-sheet-prompt.md](skills/storyboard-builder/references/sticker-sheet-prompt.md) · guide:
+   [stickers.md](skills/storyboard-builder/references/stickers.md).
+
+Then split each sheet into separate, checked transparent PNGs, for example
+`oex assets split pose-sheet.png --kind poses --out ~/OpenExplainer/my-mascot`, and prepare the mascot with
+`oex mascot prepare`. The step-by-step guide, with what works today, is [docs/mascot/SHEETS.md](docs/mascot/SHEETS.md).
+
+What to expect: a generated sheet is **not** animation-ready by itself. The splitter cleans the transparency,
+finds where each item really is and writes a review sheet, but you still look at every result: the mouth sheet has
+no labels, the mouthless sheet is redrawn rather than edited pixel by pixel, and generators drift. Tested so far:
+poses as a full-body mascot that gestures (without lip sync), expressions with mouths placed on the mouthless face as
+a head-and-shoulders mascot that lip-syncs, and stickers as pictures in `image` scenes. Lip sync on a full-body
+mascot from the mouth sheet is not tested yet. Prefer one image per message? The original route
+([docs/mascot/GUIDE.md](docs/mascot/GUIDE.md), `oex prompts`) still gives the most exact lip sync.
+
+## Copy & Paste Prompts
+
+**[Open the Open Explainer Prompts page on Notion](https://app.notion.com/p/the-social-cafe/Open-Explainer-Prompts-41904fa145df8078adb8ec08aeb301b5)**
+(public, no login needed).
+
+New to image generators? The Notion page is the easiest place to start: it has the six prompts above (master
+mascot, mouth shapes, pose sheet, expression sheet, mouthless sheet and sticker sheet), each in its own copyable
+block, with short steps and tips. Open the page, copy a whole prompt, paste it into the AI image-generation tool you
+prefer, and attach the image the prompt asks for (your photo, your approved mascot, or a style reference). Then come
+back here to split and prepare the results.
+
+The prompts on Notion have the same wording as the copies kept in this repository, which remain the reference:
+[prompts/sheets/](prompts/sheets/) and
+[sticker-sheet-prompt.md](skills/storyboard-builder/references/sticker-sheet-prompt.md).
+
 ## Documentation
 
 | | |
@@ -72,7 +126,7 @@ say *"make an explainer video about how GPS works"*. See [docs/INSTALL.md](docs/
 | [showcase/ai-agents-60s/](showcase/ai-agents-60s/) | a complete 60-second production to copy from |
 | [docs/INSTALL.md](docs/INSTALL.md) | installation, Claude Code and Codex setup |
 | [docs/USER-GUIDE.md](docs/USER-GUIDE.md) | your first film, project and storyboard files |
-| [docs/mascot/GUIDE.md](docs/mascot/GUIDE.md) · [prompts/](prompts/) | make and prepare your own mascot |
+| [docs/mascot/GUIDE.md](docs/mascot/GUIDE.md) · [docs/mascot/SHEETS.md](docs/mascot/SHEETS.md) · [prompts/](prompts/) | make and prepare your own mascot (one image per message, or from sheets) |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | errors and fixes |
 | [docs/DEVELOPER.md](docs/DEVELOPER.md) | architecture, modules, tests, extending |
 | [docs/specs/COMPONENTS.md](docs/specs/COMPONENTS.md) · [docs/adr/](docs/adr/) | component specifications, architecture decisions |
@@ -104,13 +158,15 @@ Version 0.3.0, **public beta**. Known limitations:
   agents' sandboxes (for example Codex). Record your own narration, or use a TTS service or model whose licence
   allows publishing, for anything you share.
 - Lip sync is driven by the sound of the voice: cartoon quality, not phoneme-accurate.
-- Custom mascots are tested with the bundled demo mascot and a procedurally drawn stand-in; mascots made with
-  image generators may need the repair prompt (`oex prompts 6`).
+- Custom mascots are tested with the bundled demo mascot, a procedurally drawn stand-in and one private set of
+  generated sheets (not distributed); mascots made with image generators may need the repair prompt
+  (`oex prompts 6`). From sheets, lip sync is tested on a head-and-shoulders mascot only, and mouth names and
+  placement are checked by eye.
 - Agent use is exercised end to end with Claude Code; Codex finds and reads the skills, but a complete Codex run
   has not been verified yet.
-- Animated diagrams are built from boxes, pills, circles, diamonds, connectors and labels; other pictures
-  (`image` scenes) appear whole, without step-by-step animation.
-- No HTML/CSS render backend and no bundled icon library yet.
+- Animated diagrams are built from boxes, pills, circles, diamonds, connectors and labels, plus 17 built-in
+  illustrated objects in the 3d look; other pictures (`image` scenes) appear whole, without step-by-step animation.
+- No HTML/CSS render backend and no general icon library yet.
 
 ## Credits and licence
 

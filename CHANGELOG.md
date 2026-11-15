@@ -7,8 +7,8 @@ All notable changes to this project are listed here. The format follows
 
 ## [0.3.0] - 2026-11-14
 
-Third public beta: animated diagrams that move on the narration's words, steady text, and agent skills that plan
-motion. Existing projects render as before (see "Changed" for the one visible difference). Tested on macOS only;
+Third public beta: animated diagrams that move on the narration's words, in a flat or a 3d look, steady text, and
+agent skills that plan motion. Existing projects render as before (see "Changed" for the one visible difference). Tested on macOS only;
 Linux and Windows are unverified; GitHub Actions CI has not passed yet.
 
 ### Added
@@ -18,6 +18,24 @@ Linux and Windows are unverified; GitHub Actions CI has not passed yet.
   coming back), switch states (active, done, error), dim or focus parts, relabel nodes (the node resizes smoothly to
   its new label) and move them with one of ten easing curves. `"continue": true` carries a diagram on into the next
   scene without a visible cut. Every style gains `good` and `bad` colours for done and error states.
+- A 3d look for animated diagrams (`"look": "3d"`): an isometric scene of flat-shaded solids (solid face colours,
+  no gradients) on an isometric floor, connectors along the floor, cube tokens, objects that drop in and hop on
+  their words, and 17 original illustrated objects (`icon` on a node: robot, person, flag, magnifier, clipboard,
+  toolbox, gear, shield, plane, document, files, coins, trash, warning, calendar, server, globe), swapped on a
+  step with `icon`. Labels stay flat and crisp. Flat diagrams are unchanged.
+- A `white` style: a pure white background with nothing behind text (diagram labels, connector and token labels,
+  captions and the end card's call to action are plain text, with a thin white outline where they cross a line).
+  Styles can opt out of text boxes with `"boxes": false`; the other four styles keep theirs.
+- The sheet route for your own mascot and visual assets: the tested prompts for a master mascot, a 3×3 pose sheet,
+  a 3×3 expression sheet, its mouthless version and a seven-mouth sheet (`prompts/sheets/`, preserved word for
+  word), and for a 5×5 sticker sheet (storyboard-builder skill). `oex assets split` cuts a sheet into named,
+  checked transparent PNGs: it cleans generator alpha (slightly see-through art, faint specks), finds the real gaps
+  instead of assuming equal cells (the 4+3 mouth layout included), keeps sparkles with their sticker, aligns poses
+  and expressions on one canvas, reports cuts through artwork, missing items, small or alpha-less sheets, and
+  writes a review sheet and manifest. `oex assets place-mouths` paints split mouths onto a mouthless face to make
+  the mascot's mouth images. Guide: `docs/mascot/SHEETS.md`; the mascot-prep skill offers the route.
+- `colors` in `project.json` overrides any style colour by name (for example the success colour `good`), next to
+  the existing `accent`.
 - Diagram rendering is fast and deterministic: frames are drawn at 2x and box-filtered (sharp text and thin lines
   without halos), and a diagram that is not changing is drawn once and reused. About 6-12 ms per 1080p frame on
   an Apple Silicon laptop; output is identical in any frame order, on any number of workers and with or without
@@ -52,7 +70,9 @@ Linux and Windows are unverified; GitHub Actions CI has not passed yet.
 - macOS `say` narration is for private drafts and tests only: Apple's macOS licence allows its system voices for
   personal, non-commercial use and not for publishing or public sharing. The README, install and user guides, the
   voice-sync and explainer-director skills and the TTS docstrings now say so.
-- README: a showcase section with a still from the 60-second "How AI Agents Work" explainer.
+- README: a showcase section with a still from the 60-second "How AI Agents Work" explainer, linked to the
+  video on YouTube, a "Create Your Own Mascot & Visual Assets" section, and a "Copy & Paste Prompts" section linking
+  the public Notion page with the same prompts.
 
 ## [0.2.0] - 2026-11-14
 

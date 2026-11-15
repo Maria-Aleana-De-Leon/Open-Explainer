@@ -11,6 +11,9 @@ src/openexplainer/
   scenes.py, text.py, styles.py        scene templates (pure functions of time), text layout, styles as data
   motion.py                            animated `diagram` scenes: nodes, connectors, tokens, steps, layouts, easing;
                                        state(t) is pure, layers are cached by state
+  iso.py                               the 3d diagram look: isometric projection, flat-shaded solids, illustrated objects
+  sheets.py, cli_assets.py             `oex assets`: split generated sprite sheets (gap finding, alpha cleanup, checks),
+                                       paint mouth sprites onto a face
   captions.py                          chunking, SRT/VTT, burned-in captions
   mascot.py, mascot_io.py              mascot preparation (registration, changed regions, patches, review) - spec S3
   mouthtrack.py                        mouth-shape track from audio (features + DP smoothing) - spec S1

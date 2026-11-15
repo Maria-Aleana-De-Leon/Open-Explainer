@@ -124,7 +124,10 @@ print at the end. Neither replaces watching the film.
 Only `title` and `narration.audio` are required. Paths are relative to the project folder and may point outside it
 (a shared music folder, a mascot folder): files are used where they are, never copied, so keep them in place - or
 copy them into the project (e.g. `audio/`) to make it self-contained before archiving or sharing it. Styles: `paper` (warm light), `midnight` (dark technical),
-`chalk` (classroom board), `pop` (bright short-form). `mascot`, `music`, `sfx` may be `null`. `camera`: `still`
+`chalk` (classroom board), `pop` (bright short-form), `white` (pure white, plain text with no pills or boxes behind
+labels and captions). `accent` replaces the style's highlight colour; `colors` overrides any of its colours by name
+(`bg`, `bg2`, `ink`, `muted`, `accent`, `accent2`, `card`, `card_ink`, `line`, `marker`, `good` for success /
+done, `bad` for errors), for example `"colors": {"good": "#F97316"}`. `mascot`, `music`, `sfx` may be `null`. `camera`: `still`
 (the default for new projects: text stays perfectly steady) or `push` (a slow, steady push-in over each scene); without
 it, the style decides.
 
