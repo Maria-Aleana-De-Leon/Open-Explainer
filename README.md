@@ -162,6 +162,10 @@ Version 0.3.0, **public beta**. Known limitations:
   generated sheets (not distributed); mascots made with image generators may need the repair prompt
   (`oex prompts 6`). From sheets, lip sync is tested on a head-and-shoulders mascot only, and mouth names and
   placement are checked by eye.
+- Walking poses (`pose-walk-1/2/3`) are available as separate poses, but a continuous walking animation is not
+  implemented.
+- Stickers can be used as images in scenes, but animated sticker pop-up overlays are not implemented yet.
+- Full-body lip sync from generated mouth sheets remains unverified.
 - Agent use is exercised end to end with Claude Code; Codex finds and reads the skills, but a complete Codex run
   has not been verified yet.
 - Animated diagrams are built from boxes, pills, circles, diamonds, connectors and labels, plus 17 built-in
