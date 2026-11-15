@@ -42,7 +42,7 @@ def test_skill_frontmatter_and_size(skill):
 def test_skill_references_and_commands_exist(skill):
     text = (skill / "SKILL.md").read_text()
     for ref in re.findall(r"`(references/[\w./-]+\.md)`", text):
-        bundled = ref.startswith(("references/GUIDE", "references/ASSETS", "references/prompts"))
+        bundled = ref.startswith(("references/GUIDE", "references/ASSETS", "references/SHEETS", "references/prompts"))
         assert bundled or (skill / ref).exists(), ref
     sub = build_parser()._subparsers._group_actions[0].choices
     for cmd in re.findall(r"`oex (?:-C \S+ )?(?:--catalog \S+ )?([a-z][a-z-]*)", text):

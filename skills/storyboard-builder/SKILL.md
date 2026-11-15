@@ -8,6 +8,7 @@ description: Write and fix storyboard.json for an open-explainer project - scene
 A storyboard is data, not prose: `storyboard.json` is validated by `oex validate` and timed by `oex plan`.
 Full field reference: `references/storyboard-reference.md` (read it before writing your first storyboard).
 Animated diagrams: `references/motion.md` (read it before writing a `diagram` scene).
+Stickers (small emphasis pictures from one generated 5×5 sheet, shown in `image` scenes): `references/stickers.md`.
 
 ## How timing works (no timestamps needed)
 

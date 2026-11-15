@@ -6,8 +6,8 @@
    "sha256": "d56b5d5dee161ecbec6fb4e66a8991f598ac1529721c0ecefb28e9c393cb6fe2"
   },
   "mascot-prep": {
-   "files": 17,
-   "sha256": "511ae44ccd3bf6d62a16815900018c9c4ed0466857825970a2386caa19999e57"
+   "files": 18,
+   "sha256": "a628a98243912629c8e3f644be0880f6cf336d4c4c872c14d9638911c02016b8"
   },
   "render-qa": {
    "files": 2,
@@ -19,7 +19,7 @@
   },
   "storyboard-builder": {
    "files": 8,
-   "sha256": "912b0529dfef18d6a8d952505a1f25e0f22a41dcfef0184d83d5516f844171fd"
+   "sha256": "3e91d6991a937578c1ab8b7d52f5d1405190a6cbceddbffd8f9ca6a21bc7fef6"
   },
   "voice-sync": {
    "files": 2,

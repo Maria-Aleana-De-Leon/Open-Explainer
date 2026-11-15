@@ -58,7 +58,7 @@ def build() -> dict[str, dict[str, bytes]]:
         if d.name == "mascot-prep":
             for rel, b in _files(REPO / "prompts").items():
                 files[f"references/prompts/{rel}"] = b
-            for doc in ("GUIDE.md", "ASSETS.md"):
+            for doc in ("GUIDE.md", "ASSETS.md", "SHEETS.md"):
                 files[f"references/{doc}"] = _bundled_doc((REPO / "docs" / "mascot" / doc).read_text()).encode()
         skills[d.name] = files
     return skills

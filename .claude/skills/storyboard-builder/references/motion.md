@@ -36,7 +36,7 @@ time**. Motion here is explanation, not decoration: every movement should answer
 
 | Field | Meaning |
 |---|---|
-| `nodes[]` | `{id, label, x?, y?, shape?, sub?}`. `label` ≤ 3 words (`\n` for a second line); `sub` = small grey caption under it. `shape`: `box` (default: a thing, a component), `pill` (a service, an action), `circle` (a person, an actor, a start/end), `diamond` (a decision or a store, sparingly) |
+| `nodes[]` | `{id, label, x?, y?, shape?, sub?, icon?}`. `label` ≤ 3 words (`\n` for a second line); `sub` = small grey caption under it. `shape`: `box` (default: a thing, a component), `pill` (a service, an action), `circle` (a person, an actor, a start/end), `diamond` (a decision or a store, sparingly) |
 | `layout` | `manual` (default: every node needs `x`, `y` in 0..1 of the area under the heading), `row` (left to right, spaced by real node sizes), `column`, `cycle` (a loop, 3-6 nodes), `hub` (`center` in the middle, the rest around it). Nodes with their own `x`, `y` keep them |
 | `groups[]` | `{id, label?, nodes}`: a labelled frame around related nodes (a server, a device, "your computer") |
 | `edges[]` | `{id?, from, to, route?, label?}`. `route`: `straight` (default), `curve` (two connectors between the same pair, or around something), `elbow` (right-angled, tidy for grids). `label` ≤ 2 words, shown on the connector once it has drawn. Without `id` the id is `from-to` |
@@ -60,11 +60,35 @@ enter one after another, `stagger` seconds apart (default 0.12).
 | `dim` / `undim: [ids]` | the same, for chosen elements |
 | `label: {id: "new text"}` | a node's label crossfades in place ("Waiting" → "Done"); the node is sized for its longest label |
 | `move: {id: {x, y, ease?}}` | the node glides to a new position; its connectors follow |
+| `icon: {id: "name"}` | 3d look only: the node's object swaps (the old one shrinks away, the new one pops up), e.g. a generic tool becoming a plane when the narration names the flight search |
 | `flow: {edge, label?, back?, reverse?, dur?}` | a token (label riding along) travels the connector; with `back`, a second token returns right away with that label and the start node reacts; `reverse: true` sends the token from the connector's end to its start (an answer that comes back later, after other steps). `path: [e1, e2, e3]` instead of `edge` = one token through a chain of connected connectors, each node reacting as it passes. A list of flows starts them `stagger` apart |
 | `ease` | easing for this step's moves: `in_out_cubic` (default), `in_out_sine`, `out_cubic`, `out_quint`, `in_out_quint`, `out_expo`, `out_back`, `spring`, `linear` |
 
 Nodes not shown by any step are there from the scene's start; connectors not drawn by any step draw once both of
 their nodes are there. So a diagram that should simply build up only needs `show` steps.
+
+### The 3d look
+
+`"look": "3d"` on a diagram scene draws it as an isometric scene: every node is a flat-shaded solid standing on the
+floor (box → block, pill → low slab, circle → cylinder, diamond → block with a pyramid roof), connectors run along
+the floor with flat arrowheads, tokens are small cubes, and the background grid becomes an isometric floor. Faces are
+solid colours (lit top, mid right side, darker left side) with thin edges: depth without gradients. Labels stay flat
+and face the viewer above each object, so text is as crisp as in the flat look. Objects drop in on their `show`,
+hop slightly on each pulse, and the state colours the tile they stand on (active, done, error) with a ring on the
+floor; done / error badges sit on the label.
+
+On the `white` style (`"style": "white"` in project.json) labels, captions and the end card are plain text with no
+pills behind them; 3d diagrams look especially clean on it.
+
+`icon` on a node draws an illustrated object on its tile instead of a plain solid: robot, person, flag, magnifier, clipboard, toolbox, gear, shield, plane, document, files, coins, trash, warning, calendar, server, globe.
+Pick the object a viewer would draw for that part (a person for "you", a magnifier for "look", a shield for
+"check"); keep plain solids for abstract steps and results. Icons need `"look": "3d"`.
+
+Space: a 3d node is taller than a flat one (label, object, floor), so the area under a heading holds **two rows** of
+nodes (`y` 0 and 1) with a third row only between them at other `x` positions. Stagger the columns of the two rows
+rather than stacking three nodes at one `x`, keep about 0.15 of the width between neighbours (more for long labels),
+and put long result labels on two lines (`"$900\ntoo high"`). `oex review` names nodes that touch. A `continue`
+scene must keep the same look.
 
 ### Continuing a diagram across scenes
 
